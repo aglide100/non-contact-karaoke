@@ -1,0 +1,7 @@
+GRANT ALL PRIVILEGES ON DATABASE blog TO table_admin;
+
+CREATE TABLE test (
+    id serial,
+    content varchar(200),
+    PRIMARY KEY(id),
+);

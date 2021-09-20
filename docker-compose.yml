@@ -1,0 +1,46 @@
+version: "3.5"
+x-services-volume: &services-volume
+  type: bind
+
+services:
+  node:
+    container_name: node
+    build:
+      context: ./ui
+    hostname: node
+    volumes:
+      - <<: *services-volume
+        source: ./keys
+        target: /usr/src/keys
+    networks:
+      - docker_network
+    ports:
+      - 443:3000
+  postgres:
+    container_name: postgres
+    build:
+      context: ./cmd/db
+    volumes:
+      - <<: *services-volume
+        source: ${HOST}/postgres
+        target: /var/lib/postgres
+    expose:
+      - 5432
+    hostname: postgres
+    networks:
+      - docker_network
+    environment:
+      #PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: webapp
+      #POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: table_admin
+      POSTGRES_PASSWORD: ${USERPWD}
+      POSTGRES_INITDB_ARGS: --encoding=UTF-8
+
+networks:
+  docker_network:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "true"
+    ipam:
+      driver: default

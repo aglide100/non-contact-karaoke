@@ -1,18 +1,22 @@
 import express from "express";
-import { sayHello } from "../../hello";
-const server = express();
+// const server = express();
 const port = 3000;
 
-server.get("/", (req, res) => {
+class Webd {
+  public server: express.Application;
+
+  constructor() {
+    this.server = express();
+  }
+}
+
+const server = new Webd().server;
+
+server.get("/", (req: express.Request, res: express.Response) => {
   res.send("Hello world with express!");
 });
 
-server.get("/greet", (req, res) => {
-  var msg = sayHello();
-  res.send(msg);
-});
-
-server.get("/sum-start", (req, res) => {
+server.get("/sum-start", (req: express.Request, res: express.Response) => {
   console.time("duration");
   var sum = 0;
   for (var i = 0; i < 100; i++) {
