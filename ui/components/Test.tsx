@@ -16,7 +16,7 @@ const Test: React.FC<{}> = ({}) => {
   useEffect(() => {
     if (!init) {
       console.log("starting creating socket!");
-      newSocket = new WebSocket("ws://like-a-junk.com:5000");
+      newSocket = new WebSocket("wss://localhost:5000");
 
       newSocket.onopen = (id) => {
         console.log(id);

@@ -24,29 +24,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
 const ws = __importStar(require("ws"));
-const express_1 = __importDefault(require("express"));
 const fs_1 = __importDefault(require("fs"));
+const https = __importStar(require("https"));
+const cred = {
+    key: fs_1.default.readFileSync("./keys/server.key"),
+    cert: fs_1.default.readFileSync("./keys/server.crt"),
+    ca: fs_1.default.readFileSync("./keys/ca.key"),
+};
 class Server {
     constructor() {
         this.DEFAULT_PORT = 5000;
         console.log("starting create wss");
-        this.app = (0, express_1.default)();
-        this.server = this.app.listen(this.DEFAULT_PORT, function () {
-            console.log("listening on 5000");
+        // this.app = express();
+        this.server = https.createServer(cred, function (request, response) {
+            console.log(new Date() + "Received request from " + request.url);
+            response.writeHead(404);
+            response.end();
         });
+        // .listen(this.DEFAULT_PORT, function () {
+        //   console.log("listening...");
+        // });
+        // this.server = this.app.listen(this.DEFAULT_PORT, function () {
+        //   console.log("listening on 5000");
+        // });
         this.wss = new ws.Server({
             server: this.server,
         });
-        const cred = {
-            key: fs_1.default.readFileSync("./keys/server.key"),
-            cert: fs_1.default.readFileSync("./keys/server.crt"),
-        };
         this.handleSocketConnection();
     }
     handleSocketConnection() {
         this.wss.on("connection", function (ws, req) {
             console.log("!!!!!");
+            ws.emit("messege", "32222");
         });
+    }
+    listen() {
+        console.log("listening on " + this.DEFAULT_PORT);
+        this.server.listen(this.DEFAULT_PORT);
     }
 }
 exports.Server = Server;
