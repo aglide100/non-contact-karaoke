@@ -1,143 +1,47 @@
 import React, { useRef, useState } from "react";
-import io, { Socket } from "socket.io-client";
 import { useEffect } from "react";
 import * as rtc_pc from "../utils/rtc_pc_config";
-// import * as ws from "ws"
+import * as ws_manager from "../utils/ws_manager";
+
+let client: ws_manager.WsManager;
 
 const Test: React.FC<{}> = ({}) => {
-  let newSocket: WebSocket;
+  // const userID = client.getClientID();
+
+  const [init, setInit] = useState(true);
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [userID, setUserID] = useState("");
   const [pc, setPc] = useState<RTCPeerConnection>();
-  const [socket, setSocket] = useState<Socket>();
-  const [init, setInit] = useState(false);
 
   let localVideoRef = useRef<HTMLVideoElement>(null);
   let remoteVideoRef = useRef<HTMLVideoElement>(null);
 
+  async function connSocket() {
+    return (client = await asyncSocket());
+    // setTimeout(function () {
+    //   return client.sendMsg("", "answer", "server");
+    // }, 1000);
+
+    // client = await new ws_manager.WsManager();
+  }
+
+  function asyncSocket() {
+    var client = new ws_manager.WsManager();
+    return client;
+  }
+
   useEffect(() => {
-    if (!init) {
-      console.log("starting creating socket!");
-      newSocket = new WebSocket("wss://localhost:5000");
-
-      newSocket.onopen = (id) => {
-        console.log(id);
-      };
-
-      // newSocket.on("open", (id) => {
-      //   //socket.emit("join-room", 1234, "id", "user");
-      //   console.log(id);
-      // });
-      /*let newPC = new RTCPeerConnection(rtc_pc.pc_config);
-
-      newSocket.on(
-        "all_users",
-        (allUsers: Array<{ userID: string; userName: string }>) => {
-          let len = allUsers.length;
-          if (len > 0) {
-            createOffer();
-          }
-        }
-      );
-
-      
-
-      newSocket.on("error", (err: Error) => {
-        console.log("peer connection error", err);
-        //   newSocket.reconnect()
+    if (init) {
+      connSocket().catch((error) => {
+        console.log(error);
       });
-
-      newSocket.on("getOffer", (sdp: RTCSessionDescription) => {
-        console.log("get offer");
-        createAnswer(sdp);
-      });
-
-      newSocket.on("getAnswer", (sdp: RTCSessionDescription) => {
-        console.log("get answer");
-        newPC.setRemoteDescription(new RTCSessionDescription(sdp));
-        console.log(sdp);
-      });
-
-      newSocket.on("getCandidate", (candidate: RTCIceCandidateInit) => {
-        newPC.addIceCandidate(new RTCIceCandidate(candidate)).then(() => {
-          console.log("candidate add success");
-        });
-      });*/
-
-      // setSocket(newSocket);
-      //setPc(newPC);
-
-      /*navigator.mediaDevices
-        .getUserMedia({
-          video: true,
-          audio: true,
-        })
-        .then((stream) => {
-          if (localVideoRef.current) localVideoRef.current.srcObject = stream;
-
-          stream.getTracks().forEach((track) => {
-            newPC.addTrack(track, stream);
-          });
-          newPC.onicecandidate = (e) => {
-            if (e.candidate) {
-              console.log("onicecandidate");
-              newSocket.emit("candidate", e.candidate);
-            }
-          };
-
-          newPC.ontrack = (ev) => {
-            console.log("add remotetrack success");
-            if (remoteVideoRef.current)
-              remoteVideoRef.current.srcObject = ev.streams[0];
-          };
-
-          newSocket.emit("join_room", {
-            ROOM_ID: "1234",
-            id: "sample",
-            user: "user",
-          });
-        })
-        .catch((error) => {
-          console.log(`getUserMedia error: ${error}`);
-        });
-
-      const createOffer = () => {
-        console.log("create offer");
-        newPC
-          .createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true })
-          .then((sdp) => {
-            newPC.setLocalDescription(new RTCSessionDescription(sdp));
-            newSocket.emit("offer", sdp);
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      };
-
-      const createAnswer = (sdp: RTCSessionDescription) => {
-        newPC.setRemoteDescription(new RTCSessionDescription(sdp)).then(() => {
-          console.log("answer set remote description success");
-          newPC
-            .createAnswer({
-              offerToReceiveVideo: true,
-              offerToReceiveAudio: true,
-            })
-            .then((sdp1) => {
-              console.log("create answer");
-              newPC.setLocalDescription(new RTCSessionDescription(sdp1));
-              newSocket.emit("answer", sdp1);
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        });
-      };
-      */
-      setInit(true);
+      setInit(false);
     }
   });
 
   return (
     <div>
-      <video
+      {/* <video
         style={{
           width: 240,
           height: 240,
@@ -158,7 +62,8 @@ const Test: React.FC<{}> = ({}) => {
         }}
         ref={remoteVideoRef}
         autoPlay
-      ></video>
+      ></video> */}
+      <div>your ID: {userID}</div>
 
       <div className="main__message_container">
         <input
@@ -172,9 +77,19 @@ const Test: React.FC<{}> = ({}) => {
           className="options__button"
           onClick={(e) => {
             e.preventDefault();
+            client.sendMsg("", "chat", "");
+            // client.createNewRoom();
           }}
         >
-          <i className="fa fa-plus" aria-hidden="true"></i>
+          Send Message!
+        </div>
+        <div
+          onClick={(e) => {
+            e.preventDefault();
+            client.createNewRoom();
+          }}
+        >
+          Create New room!
         </div>
       </div>
     </div>

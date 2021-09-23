@@ -26,37 +26,66 @@ exports.Server = void 0;
 const ws = __importStar(require("ws"));
 const fs_1 = __importDefault(require("fs"));
 const https = __importStar(require("https"));
+const express_1 = __importDefault(require("express"));
+const uuid = __importStar(require("uuid"));
+var session = require("express-session");
 const cred = {
     key: fs_1.default.readFileSync("./keys/server.key"),
     cert: fs_1.default.readFileSync("./keys/server.crt"),
     ca: fs_1.default.readFileSync("./keys/ca.key"),
 };
 class Server {
+    // private users: users[]
     constructor() {
         this.DEFAULT_PORT = 5000;
-        console.log("starting create wss");
-        // this.app = express();
-        this.server = https.createServer(cred, function (request, response) {
-            console.log(new Date() + "Received request from " + request.url);
-            response.writeHead(404);
-            response.end();
-        });
-        // .listen(this.DEFAULT_PORT, function () {
-        //   console.log("listening...");
+        console.log("starting create socket");
+        this.app = (0, express_1.default)();
+        this.server = https.createServer(cred, this.app);
+        // this.server = https.createServer(cred, function (request, response) {
+        //   console.log(new Date() + "Received request from " + request.url);
+        //   response.writeHead(404);
+        //   response.end();
         // });
-        // this.server = this.app.listen(this.DEFAULT_PORT, function () {
-        //   console.log("listening on 5000");
-        // });
-        this.wss = new ws.Server({
+        this.socket = new ws.Server({
             server: this.server,
         });
         this.handleSocketConnection();
     }
+    sendUserList() { }
     handleSocketConnection() {
-        this.wss.on("connection", function (ws, req) {
-            console.log("!!!!!");
-            ws.emit("messege", "32222");
-        });
+        this.socket.on("connection", this.onConnection);
+    }
+    onConnection(ws, req) {
+        // console.log(ws);
+        // console.log(req);
+        const newUUID = uuid.v4();
+        let data = {
+            type: "conn",
+            to: "",
+            from: "server",
+            content: newUUID,
+        };
+        let json = JSON.stringify(data);
+        ws.send(json);
+        ws.onmessage = function (ev) {
+            // console.log("receive msg!" + ev.data);
+            const common = JSON.parse(ev.data);
+            console.log(common);
+            if (common) {
+                if (common.type === "create-room") {
+                    console.log("someone call create room");
+                }
+                if (common.type === "chat") {
+                    console.log("Chat" + common);
+                }
+                if (common.type === "answer") {
+                    console.log("Answer" + common);
+                }
+            }
+        };
+        ws.onclose = function (ev) {
+            console.log("Closed!" + ev.code + "||" + ev.reason);
+        };
     }
     listen() {
         console.log("listening on " + this.DEFAULT_PORT);
