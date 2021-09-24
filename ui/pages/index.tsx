@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import dynamic from "next/dynamic";
+import "tailwindcss/tailwind.css";
 
 const TestSection = dynamic(
   () =>
