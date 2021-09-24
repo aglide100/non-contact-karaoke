@@ -35,57 +35,99 @@ const cred = {
     ca: fs_1.default.readFileSync("./keys/ca.key"),
 };
 class Server {
-    // private users: users[]
     constructor() {
         this.DEFAULT_PORT = 5000;
         console.log("starting create socket");
         this.app = (0, express_1.default)();
+        this.rooms = new Array();
+        this.users = new Array();
+        console.log("user: ", this.users);
         this.server = https.createServer(cred, this.app);
-        // this.server = https.createServer(cred, function (request, response) {
-        //   console.log(new Date() + "Received request from " + request.url);
-        //   response.writeHead(404);
-        //   response.end();
-        // });
         this.socket = new ws.Server({
             server: this.server,
         });
         this.handleSocketConnection();
     }
-    sendUserList() { }
     handleSocketConnection() {
-        this.socket.on("connection", this.onConnection);
+        this.socket.on("connection", (ws, req) => {
+            this.onConnection(ws, req);
+        });
     }
     onConnection(ws, req) {
         // console.log(ws);
         // console.log(req);
+        // req 쿠키나 세션 체크
         const newUUID = uuid.v4();
         let data = {
             type: "conn",
             to: "",
             from: "server",
+            // 임시로 uuid발급!
             content: newUUID,
         };
         let json = JSON.stringify(data);
+        const newUser = { userId: newUUID, socket: ws };
+        console.log("current users", this.users.length);
+        this.users.push(newUser);
         ws.send(json);
-        ws.onmessage = function (ev) {
-            // console.log("receive msg!" + ev.data);
-            const common = JSON.parse(ev.data);
-            console.log(common);
-            if (common) {
-                if (common.type === "create-room") {
-                    console.log("someone call create room");
-                }
-                if (common.type === "chat") {
-                    console.log("Chat" + common);
-                }
-                if (common.type === "answer") {
-                    console.log("Answer" + common);
-                }
+        ws.onmessage = (ev) => {
+            this.onMessage(ws, ev);
+        };
+        ws.onclose = (ev) => {
+            this.onClose(ws, ev);
+        };
+    }
+    onClose(ws, ev) {
+        console.log("Closed!" + ev.code + "||" + ev.reason);
+        this.users = this.users.filter((user) => {
+            // user.socket != ws
+            if (user.socket == ws) {
+                console.log(user.userId + " is left");
             }
-        };
-        ws.onclose = function (ev) {
-            console.log("Closed!" + ev.code + "||" + ev.reason);
-        };
+            else {
+                return user;
+            }
+        });
+    }
+    onMessage(ws, ev) {
+        const common = JSON.parse(ev.data);
+        console.log(common);
+        if (common) {
+            if (common.type === "req-create-room") {
+                console.log("someone call create room");
+                const newUUID = uuid.v4();
+                const newRoom = { roomID: newUUID, userID: [] };
+                newRoom.userID.push(common.from);
+                this.rooms.push(newRoom);
+                let data = {
+                    type: "res-create-room",
+                    to: common.to,
+                    from: "server",
+                    content: newUUID,
+                };
+                ws.send(JSON.stringify(data));
+            }
+            if (common.type === "req-get-rooms") {
+                const roomIDs = this.rooms.map((room) => {
+                    return room.roomID;
+                });
+                console.log("request room list");
+                let data = {
+                    type: "res-get-rooms",
+                    to: common.to,
+                    from: "server",
+                    content: JSON.stringify(this.rooms),
+                };
+                let json = JSON.stringify(data);
+                ws.send(json);
+            }
+            if (common.type === "chat") {
+                console.log("Chat" + common);
+            }
+            if (common.type === "answer") {
+                console.log("Answer" + common);
+            }
+        }
     }
     listen() {
         console.log("listening on " + this.DEFAULT_PORT);

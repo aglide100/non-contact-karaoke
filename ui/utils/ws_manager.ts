@@ -8,14 +8,21 @@ import * as commonType from "../../common/socket-message";
   1 - conncetion established
   2 - in closing handshake
   3 - connection closed or could not open
-
 */
+type room = {
+  roomID: string;
+  userID: string[];
+};
+
+export type cancelFunc = () => void;
 
 export class WsManager {
+  private static instance: WsManager;
   private client: WebSocket;
   private static userID: string;
 
   constructor() {
+    console.log("trying connect to " + ws_config.config.url + "....");
     this.client = new WebSocket(ws_config.config.url);
 
     this.client.onopen = this.onOpen;
@@ -23,6 +30,28 @@ export class WsManager {
     this.client.onerror = this.onError;
     this.client.onmessage = this.onMessage;
   }
+
+  public static getInstance(): WsManager {
+    if (!WsManager.instance) {
+      console.log("creating WsManger instance!");
+      WsManager.instance = new WsManager();
+    }
+
+    return WsManager.instance;
+  }
+
+  private call(fn: () => cancelFunc): cancelFunc {
+    return WsManager.getInstance().call(fn);
+  }
+
+  public static Auth(fn: () => cancelFunc): cancelFunc {
+    return this.getInstance().call((): cancelFunc => {
+      console.log("client created, yielding to call");
+      return fn();
+    });
+  }
+
+  public static;
 
   private onMessage(ev: MessageEvent) {
     let userIDTemp;
@@ -36,13 +65,19 @@ export class WsManager {
 
       if (common.type === "chat") {
       }
+
+      if (common.type === "res-get-rooms") {
+        const rooms: room = JSON.parse(common.content);
+        console.log("current rooms :" + rooms.roomID.length);
+      }
+
+      if (common.type === "res-create-room") {
+        alert("successfully create room!" + common.content);
+      }
     }
 
     if (userIDTemp != null || userIDTemp != undefined) {
-      // this.setUerID(userIDTemp);
       WsManager.userID = userIDTemp;
-      // setUserID(userIDTemp);
-      console.log(WsManager.userID);
     }
   }
 
@@ -58,6 +93,13 @@ export class WsManager {
     console.log("Connection opened", ev);
   }
 
+  public getRooms(): string[] {
+    var list: string[];
+    // later adding get roomlist!
+    this.sendMsg("", "req-get-rooms", "server");
+    return list;
+  }
+
   public setUserID(value) {
     WsManager.userID = value;
   }
@@ -71,7 +113,7 @@ export class WsManager {
 
   public createNewRoom() {
     if (this.client.readyState === 1) {
-      this.sendMsg("", "create-room", "server");
+      this.sendMsg("", "req-create-room", "server");
     } else {
       // return
     }

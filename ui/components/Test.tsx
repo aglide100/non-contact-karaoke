@@ -13,20 +13,17 @@ const Test: React.FC<{}> = ({}) => {
   const [userID, setUserID] = useState("");
   const [pc, setPc] = useState<RTCPeerConnection>();
 
+  const [chatMsg, setChatMsg] = useState("");
+
   let localVideoRef = useRef<HTMLVideoElement>(null);
   let remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   async function connSocket() {
     return (client = await asyncSocket());
-    // setTimeout(function () {
-    //   return client.sendMsg("", "answer", "server");
-    // }, 1000);
-
-    // client = await new ws_manager.WsManager();
   }
 
   function asyncSocket() {
-    var client = new ws_manager.WsManager();
+    var client = ws_manager.WsManager.getInstance();
     return client;
   }
 
@@ -35,6 +32,7 @@ const Test: React.FC<{}> = ({}) => {
       connSocket().catch((error) => {
         console.log(error);
       });
+
       setInit(false);
     }
   });
@@ -71,13 +69,17 @@ const Test: React.FC<{}> = ({}) => {
           type="text"
           autoComplete="off"
           placeholder="Type message here..."
+          onChange={(e) => {
+            e.preventDefault();
+            setChatMsg(e.target.textContent);
+          }}
         />
         <div
           id="send"
           className="options__button"
           onClick={(e) => {
             e.preventDefault();
-            client.sendMsg("", "chat", "");
+            client.sendMsg(chatMsg, "chat", "");
             // client.createNewRoom();
           }}
         >
