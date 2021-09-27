@@ -1,5 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const server_1 = require("./server");
-var server = new server_1.Server();
+const socket_1 = require("../../pkg/core/socket");
+var server = new socket_1.Server();
 server.listen();

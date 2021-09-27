@@ -1,5 +1,6 @@
 import * as ws_config from "./ws_config";
 import * as commonType from "../../common/model/socket-message";
+import { type } from "os";
 
 /*
   websocket readyState field
@@ -20,6 +21,7 @@ export class WsManager {
   private static instance: WsManager;
   private client: WebSocket;
   private static userID: string;
+  private static roomID: string;
 
   constructor() {
     console.log("trying connect to " + ws_config.config.url + "....");
@@ -71,6 +73,9 @@ export class WsManager {
 
       if (common.type === "res-create-room") {
         alert("successfully create room!" + common.content);
+
+        WsManager.getInstance().joinRoom(common.content);
+        WsManager.roomID = common.content;
       }
     }
 
@@ -112,6 +117,14 @@ export class WsManager {
   public createNewRoom() {
     if (this.client.readyState === 1) {
       this.sendMsg("", "req-create-room", "server");
+    } else {
+      // return
+    }
+  }
+
+  public joinRoom(roomID: string) {
+    if (this.client.readyState === 1) {
+      this.sendMsg(roomID, "req-join-room", "server");
     } else {
       // return
     }
