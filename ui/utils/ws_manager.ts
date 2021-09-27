@@ -1,5 +1,5 @@
 import * as ws_config from "./ws_config";
-import * as commonType from "../../common/socket-message";
+import * as commonType from "../../common/model/socket-message";
 
 /*
   websocket readyState field
@@ -50,8 +50,6 @@ export class WsManager {
       return fn();
     });
   }
-
-  public static;
 
   private onMessage(ev: MessageEvent) {
     let userIDTemp;

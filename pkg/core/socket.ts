@@ -4,8 +4,7 @@ import * as https from "https";
 import express from "express";
 import { IncomingMessage } from "http";
 import * as uuid from "uuid";
-import * as commonType from "../../common/socket-message";
-import { throws } from "assert";
+import * as commonType from "../../common/model/socket-message";
 
 var session = require("express-session");
 
