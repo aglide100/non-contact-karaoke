@@ -11,9 +11,12 @@ import { WebSocketHandler } from "./handler/webSocketHandler";
 var session = require("express-session");
 
 const cred = {
-  key: fs.readFileSync("./keys/server.key"),
-  cert: fs.readFileSync("./keys/server.crt"),
-  ca: fs.readFileSync("./keys/ca.key"),
+  // key: fs.readFileSync("./keys/server.key"),
+  // cert: fs.readFileSync("./keys/server.crt"),
+  // ca: fs.readFileSync("./keys/ca.key"),
+  ca: fs.readFileSync("./keys/fullchain1.pem"),
+  key: fs.readFileSync("./keys/privkey1.pem"),
+  cert: fs.readFileSync("./keys/cert1.pem"),
 };
 
 type user = {
