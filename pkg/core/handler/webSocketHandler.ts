@@ -1,6 +1,7 @@
-import * as commonType from "../../../common/model/socket-message";
+import * as commonType from "../../../ui/common/model/socket-message";
 import * as room from "../model/socket/room";
 import * as uuid from "uuid";
+import * as user from "../model/socket/user";
 
 export class WebSocketHandler {
   public onClose(ws: WebSocket, ev: CloseEvent): void {}
@@ -28,7 +29,16 @@ export class WebSocketHandler {
       }
 
       if (common.type === "req-join-room") {
+        // if (
+        //   user.User.getInstance().getUser().roomID == null ||
+        //   user.User.getInstance().getUser().roomID == undefined
+        // ) {
+
+        // } else {
+
         room.Room.getInstance().joinRoom(common.from, common.content);
+        // user.User.getInstance().setUserInRoomID()
+        // }
       }
 
       if (common.type === "req-get-rooms") {

@@ -76,7 +76,6 @@ class Server {
         ws.send(json);
         ws.onmessage = (ev) => {
             this.websocketHandler.onMessage(ws, ev);
-            // this.onMessage(ws, ev);
         };
         ws.onclose = (ev) => {
             this.onClose(ws, ev);
@@ -95,51 +94,6 @@ class Server {
             }
         });
     }
-    // private onMessage(ws: WebSocket, ev: MessageEvent): void {
-    //   const common: commonType.socketMessage = JSON.parse(ev.data);
-    //   console.log(common);
-    //   if (common) {
-    //     if (common.type === "req-create-room") {
-    //       console.log("someone call create room");
-    //       const newUUID = uuid.v4();
-    //       const newRoom: room = { roomID: newUUID, userID: [] };
-    //       newRoom.userID.push(common.from);
-    //       room.Room.getInstance().newRoom(newRoom);
-    //       let data: commonType.socketMessage = {
-    //         type: "res-create-room",
-    //         to: common.to,
-    //         from: "server",
-    //         content: newUUID,
-    //       };
-    //       ws.send(JSON.stringify(data));
-    //     }
-    //     if (common.type === "req-join-room") {
-    //       room.Room.getInstance().joinRoom(common.from, common.content);
-    //     }
-    //     if (common.type === "req-get-rooms") {
-    //       const roomIDs = room.Room.getInstance()
-    //         .getRooms()
-    //         .map((room) => {
-    //           return room.roomID;
-    //         });
-    //       console.log("request room list");
-    //       let data: commonType.socketMessage = {
-    //         type: "res-get-rooms",
-    //         to: common.to,
-    //         from: "server",
-    //         content: JSON.stringify(roomIDs),
-    //       };
-    //       let json = JSON.stringify(data);
-    //       ws.send(json);
-    //     }
-    //     if (common.type === "chat") {
-    //       console.log("Chat" + common);
-    //     }
-    //     if (common.type === "answer") {
-    //       console.log("Answer" + common);
-    //     }
-    //   }
-    // }
     listen() {
         console.log("listening on " + this.DEFAULT_PORT);
         this.server.listen(this.DEFAULT_PORT);

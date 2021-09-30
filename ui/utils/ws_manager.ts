@@ -1,5 +1,5 @@
 import * as ws_config from "./ws_config";
-import * as commonType from "../../common/model/socket-message";
+import * as commonType from "../common/model/socket-message";
 import { type } from "os";
 
 /*

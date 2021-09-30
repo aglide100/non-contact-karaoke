@@ -4,7 +4,7 @@ import * as https from "https";
 import express from "express";
 import { IncomingMessage } from "http";
 import * as uuid from "uuid";
-import * as commonType from "../../common/model/socket-message";
+import * as commonType from "../../ui/common/model/socket-message";
 import * as room from "./model/socket/room";
 import { WebSocketHandler } from "./handler/webSocketHandler";
 

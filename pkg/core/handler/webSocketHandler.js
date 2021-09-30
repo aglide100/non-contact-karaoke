@@ -43,7 +43,14 @@ class WebSocketHandler {
                 ws.send(JSON.stringify(data));
             }
             if (common.type === "req-join-room") {
+                // if (
+                //   user.User.getInstance().getUser().roomID == null ||
+                //   user.User.getInstance().getUser().roomID == undefined
+                // ) {
+                // } else {
                 room.Room.getInstance().joinRoom(common.from, common.content);
+                // user.User.getInstance().setUserInRoomID()
+                // }
             }
             if (common.type === "req-get-rooms") {
                 const roomIDs = room.Room.getInstance()

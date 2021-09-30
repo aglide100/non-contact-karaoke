@@ -15,7 +15,16 @@ services:
     networks:
       - docker_network
     ports:
-      - 443:3000
+      - 3000:3000
+  wss:
+    container_name: wss
+    build:
+      context: ./
+    hostname: wss
+    networks:
+      - docker_network
+    ports:
+      - 5000:5000
   postgres:
     container_name: postgres
     build:
