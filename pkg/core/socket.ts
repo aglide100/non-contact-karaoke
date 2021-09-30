@@ -4,15 +4,19 @@ import * as https from "https";
 import express from "express";
 import { IncomingMessage } from "http";
 import * as uuid from "uuid";
-import * as commonType from "../../common/socket-message";
-import { throws } from "assert";
+import * as commonType from "../../ui/common/model/socket-message";
+import * as room from "./model/socket/room";
+import { WebSocketHandler } from "./handler/webSocketHandler";
 
 var session = require("express-session");
 
 const cred = {
-  key: fs.readFileSync("./keys/server.key"),
-  cert: fs.readFileSync("./keys/server.crt"),
-  ca: fs.readFileSync("./keys/ca.key"),
+  // key: fs.readFileSync("./keys/server.key"),
+  // cert: fs.readFileSync("./keys/server.crt"),
+  // ca: fs.readFileSync("./keys/ca.key"),
+  ca: fs.readFileSync("./keys/fullchain1.pem"),
+  key: fs.readFileSync("./keys/privkey1.pem"),
+  cert: fs.readFileSync("./keys/cert1.pem"),
 };
 
 type user = {
@@ -30,7 +34,7 @@ export class Server {
   private socket: ws.Server;
   private server: https.Server;
   private app: express.Application;
-  private rooms: room[];
+  private websocketHandler: WebSocketHandler;
   private users: user[];
 
   private static isLoaded: boolean;
@@ -38,7 +42,7 @@ export class Server {
   constructor() {
     console.log("starting create socket");
     this.app = express();
-    this.rooms = new Array();
+    // this.rooms = new Array();
     this.users = new Array();
 
     console.log("user: ", this.users);
@@ -48,6 +52,8 @@ export class Server {
     this.socket = new ws.Server({
       server: this.server,
     });
+
+    this.websocketHandler = new WebSocketHandler();
 
     this.handleSocketConnection();
   }
@@ -74,11 +80,12 @@ export class Server {
 
     const newUser: user = { userId: newUUID, socket: ws };
     console.log("current users", this.users.length);
+    console.log("current rooms", room.Room.getInstance().getRooms().length);
     this.users.push(newUser);
     ws.send(json);
 
     ws.onmessage = (ev: MessageEvent) => {
-      this.onMessage(ws, ev);
+      this.websocketHandler.onMessage(ws, ev);
     };
 
     ws.onclose = (ev: CloseEvent) => {
@@ -92,60 +99,11 @@ export class Server {
       // user.socket != ws
       if (user.socket == ws) {
         console.log(user.userId + " is left");
+        room.Room.getInstance().leftUser(user.userId);
       } else {
         return user;
       }
     });
-  }
-
-  private onMessage(ws: WebSocket, ev: MessageEvent): void {
-    const common: commonType.socketMessage = JSON.parse(ev.data);
-
-    console.log(common);
-    if (common) {
-      if (common.type === "req-create-room") {
-        console.log("someone call create room");
-        const newUUID = uuid.v4();
-        const newRoom: room = { roomID: newUUID, userID: [] };
-        newRoom.userID.push(common.from);
-        this.rooms.push(newRoom);
-
-        let data: commonType.socketMessage = {
-          type: "res-create-room",
-          to: common.to,
-          from: "server",
-          content: newUUID,
-        };
-
-        ws.send(JSON.stringify(data));
-      }
-
-      if (common.type === "req-get-rooms") {
-        const roomIDs = this.rooms.map((room) => {
-          return room.roomID;
-        });
-
-        console.log("request room list");
-        let data: commonType.socketMessage = {
-          type: "res-get-rooms",
-          to: common.to,
-          from: "server",
-          content: JSON.stringify(this.rooms),
-        };
-
-        let json = JSON.stringify(data);
-
-        ws.send(json);
-      }
-
-      if (common.type === "chat") {
-        console.log("Chat" + common);
-      }
-
-      if (common.type === "answer") {
-        console.log("Answer" + common);
-      }
-    }
   }
 
   public listen() {

@@ -1,4 +1,4 @@
-GRANT ALL PRIVILEGES ON DATABASE blog TO table_admin;
+GRANT ALL PRIVILEGES ON DATABASE webapp TO table_admin;
 
 CREATE TABLE test (
     id serial,

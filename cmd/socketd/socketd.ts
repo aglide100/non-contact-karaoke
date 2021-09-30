@@ -1,4 +1,4 @@
-import { Server } from "./server";
+import { Server } from "../../pkg/core/socket";
 
 var server = new Server();
 server.listen();

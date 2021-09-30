@@ -28,6 +28,8 @@ const fs_1 = __importDefault(require("fs"));
 const https = __importStar(require("https"));
 const express_1 = __importDefault(require("express"));
 const uuid = __importStar(require("uuid"));
+const room = __importStar(require("./model/socket/room"));
+const webSocketHandler_1 = require("./handler/webSocketHandler");
 var session = require("express-session");
 const cred = {
     key: fs_1.default.readFileSync("./keys/server.key"),
@@ -39,13 +41,14 @@ class Server {
         this.DEFAULT_PORT = 5000;
         console.log("starting create socket");
         this.app = (0, express_1.default)();
-        this.rooms = new Array();
+        // this.rooms = new Array();
         this.users = new Array();
         console.log("user: ", this.users);
         this.server = https.createServer(cred, this.app);
         this.socket = new ws.Server({
             server: this.server,
         });
+        this.websocketHandler = new webSocketHandler_1.WebSocketHandler();
         this.handleSocketConnection();
     }
     handleSocketConnection() {
@@ -68,10 +71,11 @@ class Server {
         let json = JSON.stringify(data);
         const newUser = { userId: newUUID, socket: ws };
         console.log("current users", this.users.length);
+        console.log("current rooms", room.Room.getInstance().getRooms().length);
         this.users.push(newUser);
         ws.send(json);
         ws.onmessage = (ev) => {
-            this.onMessage(ws, ev);
+            this.websocketHandler.onMessage(ws, ev);
         };
         ws.onclose = (ev) => {
             this.onClose(ws, ev);
@@ -83,51 +87,12 @@ class Server {
             // user.socket != ws
             if (user.socket == ws) {
                 console.log(user.userId + " is left");
+                room.Room.getInstance().leftUser(user.userId);
             }
             else {
                 return user;
             }
         });
-    }
-    onMessage(ws, ev) {
-        const common = JSON.parse(ev.data);
-        console.log(common);
-        if (common) {
-            if (common.type === "req-create-room") {
-                console.log("someone call create room");
-                const newUUID = uuid.v4();
-                const newRoom = { roomID: newUUID, userID: [] };
-                newRoom.userID.push(common.from);
-                this.rooms.push(newRoom);
-                let data = {
-                    type: "res-create-room",
-                    to: common.to,
-                    from: "server",
-                    content: newUUID,
-                };
-                ws.send(JSON.stringify(data));
-            }
-            if (common.type === "req-get-rooms") {
-                const roomIDs = this.rooms.map((room) => {
-                    return room.roomID;
-                });
-                console.log("request room list");
-                let data = {
-                    type: "res-get-rooms",
-                    to: common.to,
-                    from: "server",
-                    content: JSON.stringify(this.rooms),
-                };
-                let json = JSON.stringify(data);
-                ws.send(json);
-            }
-            if (common.type === "chat") {
-                console.log("Chat" + common);
-            }
-            if (common.type === "answer") {
-                console.log("Answer" + common);
-            }
-        }
     }
     listen() {
         console.log("listening on " + this.DEFAULT_PORT);
