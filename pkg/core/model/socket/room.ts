@@ -48,6 +48,24 @@ export class Room {
     });
   }
 
+  public findUser(userID: string): boolean {
+    if (Room.rooms == undefined) {
+      Room.rooms = new Array();
+      console.log("there's no room!");
+      return false;
+    }
+    let ok = false;
+
+    Room.rooms.map((room) => {
+      room.userID.map((user) => {
+        if (user == userID) {
+          ok = true;
+        }
+      });
+    });
+    return ok;
+  }
+
   public leftUser(userID: string) {
     if (Room.rooms == undefined) {
       Room.rooms = new Array();
@@ -55,9 +73,19 @@ export class Room {
 
     Room.rooms = Room.rooms.filter((room) => {
       return room.userID.filter((user) => {
+        var isAlone;
+
+        if (room.userID.length == 1) {
+          isAlone = true;
+        } else {
+          isAlone = false;
+        }
+
         if (user == userID) {
           //   passed
+          console.log("left user in room");
         } else {
+          isAlone = false;
           return user;
         }
       });
@@ -66,14 +94,29 @@ export class Room {
     this.deleteUnUsedRoom();
   }
 
+  public deleteRoom(roomID: string) {
+    if (Room.rooms == undefined) {
+      Room.rooms = new Array();
+    }
+
+    Room.rooms = Room.rooms.filter((room) => {
+      if (room.roomID == roomID) {
+        // passed
+      } else {
+        return;
+      }
+    });
+  }
+
   public deleteUnUsedRoom() {
     if (Room.rooms == undefined) {
       Room.rooms = new Array();
     }
 
     Room.rooms = Room.rooms.filter((room) => {
-      if (room.userID == null) {
+      if (room.userID.length == 0) {
         console.log("room removed");
+        Room.rooms.length--;
       } else {
         return room;
       }

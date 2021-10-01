@@ -54,7 +54,7 @@ export class WsManager {
 
   private onMessage(ev: MessageEvent) {
     let userIDTemp;
-    console.log("receive msg!" + ev.data);
+    // console.log("receive msg!" + ev.data);
     const common: commonType.socketMessage = JSON.parse(ev.data);
     if (common) {
       // just for test !!!!
@@ -110,6 +110,8 @@ export class WsManager {
     if (this.client.readyState === 1) {
       return WsManager.userID;
     }
+
+    console.log(this.client.readyState);
     return null;
   }
 

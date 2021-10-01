@@ -19,21 +19,36 @@ const Test: React.FC<{}> = ({}) => {
   let remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   async function connSocket() {
-    return (client = await asyncSocket());
-  }
-
-  function asyncSocket() {
-    var client = ws_manager.WsManager.getInstance();
-    return client;
+    var clientTemp = await ws_manager.WsManager.getInstance();
+    return clientTemp;
   }
 
   useEffect(() => {
     if (init) {
-      connSocket().catch((error) => {
-        console.log(error);
-      });
+      connSocket()
+        .then(function (clientTemp) {
+          setTimeout(function () {
+            setIsLoaded(true);
+            setUserID(clientTemp.getClientID());
+          }, 1500);
 
-      setInit(false);
+          return (client = clientTemp);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      // connSocket()
+      //   .catch((error) => {
+      //     console.log(error);
+      //   })
+      //   .then(() => {
+      //     setIsLoaded(true);
+      //     setUserID(client.getClientID());
+      //     console.log(userID);
+      //   });
+
+      // setInit(false);
     }
   });
 
@@ -70,8 +85,8 @@ const Test: React.FC<{}> = ({}) => {
           autoComplete="off"
           placeholder="Type message here..."
           onChange={(e) => {
-            e.preventDefault();
-            setChatMsg(e.target.textContent);
+            // e.preventDefault();
+            setChatMsg(e.target.value);
           }}
         />
         <div
@@ -79,7 +94,9 @@ const Test: React.FC<{}> = ({}) => {
           className="options__button"
           onClick={(e) => {
             e.preventDefault();
-            client.sendMsg(chatMsg, "chat", "");
+            if (isLoaded) {
+              client.sendMsg(chatMsg, "chat", "");
+            }
             // client.createNewRoom();
           }}
         >
@@ -88,7 +105,9 @@ const Test: React.FC<{}> = ({}) => {
         <div
           onClick={(e) => {
             e.preventDefault();
-            client.createNewRoom();
+            if (isLoaded) {
+              client.createNewRoom();
+            }
           }}
         >
           Create New room!

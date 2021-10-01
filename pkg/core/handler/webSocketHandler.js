@@ -49,8 +49,18 @@ class WebSocketHandler {
                 // ) {
                 // } else {
                 room.Room.getInstance().joinRoom(common.from, common.content);
-                // user.User.getInstance().setUserInRoomID()
-                // }
+                if (room.Room.getInstance().findUser(common.from)) {
+                    let data = {
+                        type: "res-join-room",
+                        to: common.from,
+                        from: "server",
+                        content: "successfully joined",
+                    };
+                    ws.send(JSON.stringify(data));
+                }
+                else {
+                    console.log("Can't joined user in room....");
+                }
             }
             if (common.type === "req-get-rooms") {
                 const roomIDs = room.Room.getInstance()

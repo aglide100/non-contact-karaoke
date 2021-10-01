@@ -1,3 +1,4 @@
 export const config = {
-  url: "wss://like-a-junk.com:5000",
+  url: "ws://localhost:5000",
+  // url: "wss://like-a-junk.com:5000",
 };

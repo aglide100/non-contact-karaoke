@@ -9,10 +9,11 @@ export type socketMessage = {
 export type socketMsgType =
   | "announce"
   | "chat"
-  | "req-get-rooms"
   | "res-get-rooms"
-  | "req-create-room"
   | "res-create-room"
+  | "res-join-room"
+  | "req-get-rooms"
+  | "req-create-room"
   | "req-delete-room"
   | "req-join-room"
   | "left-room"
