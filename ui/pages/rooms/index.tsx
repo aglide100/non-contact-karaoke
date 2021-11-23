@@ -1,39 +1,38 @@
 import { title } from "process";
-import React from "react";
+import React, { ReactElement } from "react";
 import * as ws_manager from "../../utils/ws_manager";
+import RoomItem, { RoomItemProps } from "../../components/RoomItem";
 
-function Rooms(){
- // let post = '1번 방'; // 데이터 바인딩
+const tempRoomList: RoomItemProps[] = [
+  { roomId: "1", roomTitle: "1번방" },
+  { roomId: "5", roomTitle: "2번방" },
+  { roomId: "6", roomTitle: "3번방" },
+  { roomId: "7", roomTitle: "4번방" },
+  { roomId: "8", roomTitle: "5번방" },
+  { roomId: "9", roomTitle: "6번방" },
+];
 
-  return(
+const Rooms: React.FC = ({}) => {
+  let roomList: ReactElement[];
+
+  roomList = tempRoomList.map((room, index) => {
+    return (
+      <RoomItem
+        key={index}
+        roomId={room.roomId}
+        roomTitle={room.roomTitle}
+      ></RoomItem>
+    );
+  });
+
+  let post = "테스팅";
+  return (
     <div>
-      
-        <div style={{color : 'green', fontSize:'40px'}}>Title</div>
-
-      
-      <h3 style={{width: '300px', height: '45px', margin : '50px', backgroundColor: 'silver'}}> 1번 방 </h3>
-      
-      
-      <div className='list'>
-      <h3>2번 방</h3>
-      </div>
-
-      <div className='list'>
-      <h3>3번 방</h3>
-      </div>
+      연습용 만들기
+      <h3>{post}</h3>
+      {roomList}
     </div>
   );
-}
-// const Rooms: React.FC = ({}) => {
-  
-//   let post = "테스팅";
-//   return (
-//     <div>연습용 만들기
-//       <h3>{post}</h3>
-//       </div>
-//   );
-//   // return <div>뭐지??</div>;
-// };
-
+};
 
 export default Rooms;
