@@ -7,10 +7,12 @@ import { useRouter } from "next/router";
 const Room: React.FC = ({}) => {
   const router = useRouter();
   const { id } = router.query;
+  //const { pw } = router.query;
 
   return (
     <>
-      <div className="text-green-500">room id : {id}</div>
+      <div className="text-green-500">Room id : {id}</div>
+       
     </>
   );
 };
