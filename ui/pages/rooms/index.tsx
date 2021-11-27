@@ -1,4 +1,3 @@
-import { title } from "process";
 import React, {ReactElement, useState} from "react";
 import * as ws_manager from "../../utils/ws_manager";
 // import "./App.css";
@@ -56,7 +55,6 @@ const Rooms: React.FC = ({}) => {
   let roomList: ReactElement[];
   const [userList, setUserList] = useState("");
 
-  
 
   roomList = tempRoomList.map((room, index) => {
     return (
@@ -75,10 +73,10 @@ const Rooms: React.FC = ({}) => {
     setUserList(roomId);
   }
 
-  let post = "Title";
+  
   return (
     <div>
-      <h1 style = {TitleStyle}>{post}</h1>
+      <h1 style = {TitleStyle}>title</h1>
      
       <div className="flex-direction: column">
         <div>
