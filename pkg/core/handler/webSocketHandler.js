@@ -48,13 +48,13 @@ class WebSocketHandler {
                 //   user.User.getInstance().getUser().roomID == undefined
                 // ) {
                 // } else {
-                room.Room.getInstance().joinRoom(common.from, common.content);
+                let roomId = room.Room.getInstance().joinRoom(common.from, common.content);
                 if (room.Room.getInstance().findUser(common.from)) {
                     let data = {
                         type: "res-join-room",
                         to: common.from,
                         from: "server",
-                        content: "successfully joined",
+                        content: roomId,
                     };
                     ws.send(JSON.stringify(data));
                 }

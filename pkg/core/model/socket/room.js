@@ -35,6 +35,7 @@ class Room {
             }
             return room;
         });
+        return roomID;
     }
     findUser(userID) {
         if (Room.rooms == undefined) {
@@ -58,11 +59,22 @@ class Room {
         }
         Room.rooms = Room.rooms.filter((room) => {
             return room.userID.filter((user) => {
+                var isAlone;
+                if (room.userID.length == 1) {
+                    isAlone = true;
+                }
+                else {
+                    isAlone = false;
+                }
                 if (user == userID) {
                     //   passed
                     console.log("left user in room");
+                    if (Room.rooms.length > 0) {
+                        Room.rooms.length = Room.rooms.length - 1;
+                    }
                 }
                 else {
+                    isAlone = false;
                     return user;
                 }
             });

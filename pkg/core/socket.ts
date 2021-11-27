@@ -20,7 +20,7 @@ type room = {
 };
 
 export class Server {
-  private readonly DEFAULT_PORT = 5000;
+  private readonly DEFAULT_PORT = 8888;
   private socket: ws.Server;
   private server: http.Server;
   private app: express.Application;

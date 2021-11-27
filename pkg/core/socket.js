@@ -32,7 +32,7 @@ const webSocketHandler_1 = require("./handler/webSocketHandler");
 var session = require("express-session");
 class Server {
     constructor() {
-        this.DEFAULT_PORT = 5000;
+        this.DEFAULT_PORT = 8888;
         console.log("starting create socket");
         this.app = (0, express_1.default)();
         this.users = new Array();

@@ -33,7 +33,7 @@ export class Room {
     return true;
   }
 
-  public joinRoom(userID: string, roomID: string) {
+  public joinRoom(userID: string, roomID: string): string {
     if (Room.rooms == undefined) {
       Room.rooms = new Array();
     }
@@ -46,6 +46,8 @@ export class Room {
 
       return room;
     });
+
+    return roomID;
   }
 
   public findUser(userID: string): boolean {
@@ -84,6 +86,9 @@ export class Room {
         if (user == userID) {
           //   passed
           console.log("left user in room");
+          if (Room.rooms.length > 0) {
+            Room.rooms.length = Room.rooms.length - 1;
+          }
         } else {
           isAlone = false;
           return user;

@@ -1,5 +1,6 @@
 import * as ws_config from "./ws_config";
 import * as commonType from "../common/model/socket-message";
+import { NextRouter, useRouter } from "next/router";
 
 /*
   websocket readyState field
@@ -21,6 +22,8 @@ export class WsManager {
   private client: WebSocket;
   private static userID: string;
   private static roomID: string;
+  private isInit: boolean;
+  private router: NextRouter;
 
   constructor() {
     console.log("trying connect to " + ws_config.config.url + "....");
@@ -30,6 +33,8 @@ export class WsManager {
     this.client.onclose = this.onClose;
     this.client.onerror = this.onError;
     this.client.onmessage = this.onMessage;
+    this.isInit = false;
+    // this.router = useRouter();
   }
 
   public static getInstance(): WsManager {
@@ -53,13 +58,14 @@ export class WsManager {
   }
 
   private onMessage(ev: MessageEvent) {
-    let userIDTemp;
+    let userIDtemp;
+    // let roomIDtemp
     // console.log("receive msg!" + ev.data);
     const common: commonType.socketMessage = JSON.parse(ev.data);
     if (common) {
       // just for test !!!!
       if (common.type === "conn") {
-        userIDTemp = common.content;
+        userIDtemp = common.content;
       }
 
       if (common.type === "chat") {
@@ -70,16 +76,22 @@ export class WsManager {
         console.log("current rooms :" + rooms.roomID.length);
       }
 
+      if (common.type === "res-join-room") {
+        console.log("get res-join-room ", common);
+        WsManager.roomID = common.content;
+        document.location.href = "/rooms/" + common.content;
+      }
+
       if (common.type === "res-create-room") {
         alert("successfully create room!" + common.content);
 
         WsManager.getInstance().joinRoom(common.content);
-        WsManager.roomID = common.content;
+        // WsManager.roomID = common.content;
       }
     }
 
-    if (userIDTemp != null || userIDTemp != undefined) {
-      WsManager.userID = userIDTemp;
+    if (userIDtemp != null || userIDtemp != undefined) {
+      WsManager.userID = userIDtemp;
     }
   }
 

@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
+    "make": "next build && next export",
     "start": "next start",
     "start-tls": "node server.js",
     "type-check": "tsc"

@@ -4,9 +4,9 @@ import Layout from "../components/Layout";
 import dynamic from "next/dynamic";
 import "tailwindcss/tailwind.css";
 
-const TestSection = dynamic(
+const RoomList = dynamic(
   () =>
-    import("../components/Test").catch((err) => {
+    import("../components/RoomList").catch((err) => {
       return () => <>err..{err}</>;
     }),
   {
@@ -23,7 +23,7 @@ const IndexPage: React.FC<{}> = ({}) => {
           <a>About</a>
         </Link>
       </p>
-      <TestSection></TestSection>
+      <RoomList></RoomList>
     </Layout>
   );
 };

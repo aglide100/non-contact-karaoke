@@ -11,12 +11,12 @@ const Test: React.FC<{}> = ({}) => {
   const [init, setInit] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [userID, setUserID] = useState("");
-  const [pc, setPc] = useState<RTCPeerConnection>();
+  const [roomID, setRoomID] = useState("");
+  const [rooms, setRooms] = useState([]);
+  // const [chatMsg, setChatMsg] = useState("");
 
-  const [chatMsg, setChatMsg] = useState("");
-
-  let localVideoRef = useRef<HTMLVideoElement>(null);
-  let remoteVideoRef = useRef<HTMLVideoElement>(null);
+  // let localVideoRef = useRef<HTMLVideoElement>(null);
+  // let remoteVideoRef = useRef<HTMLVideoElement>(null);
 
   async function connSocket() {
     var clientTemp = await ws_manager.WsManager.getInstance();
@@ -24,12 +24,17 @@ const Test: React.FC<{}> = ({}) => {
   }
 
   useEffect(() => {
+    // let newPC = new RTCPeerConnection(rtc_pc.pc_config);
     if (init) {
       connSocket()
         .then(function (clientTemp) {
           setTimeout(function () {
             setIsLoaded(true);
             setUserID(clientTemp.getClientID());
+            let list = client.getRooms();
+            if (list != undefined) {
+              alert(list);
+            }
           }, 1500);
 
           return (client = clientTemp);
@@ -54,32 +59,11 @@ const Test: React.FC<{}> = ({}) => {
 
   return (
     <div>
-      {/* <video
-        style={{
-          width: 240,
-          height: 240,
-          margin: 5,
-          backgroundColor: "black",
-        }}
-        muted
-        ref={localVideoRef}
-        autoPlay
-      ></video>
-      <video
-        id="remotevideo"
-        style={{
-          width: 240,
-          height: 240,
-          margin: 5,
-          backgroundColor: "black",
-        }}
-        ref={remoteVideoRef}
-        autoPlay
-      ></video> */}
       <div>your ID: {userID}</div>
+      <div>room ID: </div>
 
       <div className="main__message_container">
-        <input
+        {/* <input
           id="chat_message"
           type="text"
           autoComplete="off"
@@ -101,7 +85,7 @@ const Test: React.FC<{}> = ({}) => {
           }}
         >
           Send Message!
-        </div>
+        </div> */}
         <div
           onClick={(e) => {
             e.preventDefault();
