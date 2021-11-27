@@ -19,9 +19,7 @@ const ListStyle = {
   margin: '10px'
 };
 
-// const RoomBor = {
-//   border: "1px solid black",
-// };
+
 
 const RoomItem: React.FC<RoomItemProps> = (props: RoomItemProps) => {
   return (
