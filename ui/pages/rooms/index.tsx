@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
-import { CurRoomStyle, TitleStyle } from "../../components/roomStyle";
+import { CurRoomStyle, TitleStyle, ParStyle, OverCurRoon } from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
 
@@ -66,16 +66,16 @@ const Rooms: React.FC = ({}) => {
   }
 
   return (
-    <div>
-      {/* <h1 style={TitleStyle}>title</h1> */}
+    <div style ={OverCurRoon}>
+      {/* { <h1 style={TitleStyle}>title</h1> } */}
 
       <div className="flex-direction: column">
         <div>
           <ul>{roomList}</ul>
         </div>
         <div>
-          <div style={CurRoomStyle}>방의 현재 상황</div>
-          <div>참여자</div>
+          <div style={CurRoomStyle}>@번 방의 현재 상황</div>
+          <div style = {ParStyle}>참여자 - @명 이용중</div>
           {userList == undefined ? <>인원이 없습니다!</> : <>{userList}</>}
         </div>
       </div>
