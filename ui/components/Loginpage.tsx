@@ -7,7 +7,8 @@ function Loginpage() {
 
     const onEmailHandler = (event) => {setEmail(event.currentTarget.value)}
     const onPasswordHandler = (event) => {setPassword(event.currentTarget.value)}
-    const onSubmitHandler=(event)=>{event.preventDefault()
+    const onSubmitHandler=(event)=>{
+    event.preventDefault();
         let body={email: Email, password: Password}
     } 
 
