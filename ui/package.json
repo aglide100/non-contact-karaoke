@@ -3,7 +3,6 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "make": "next build && next export",
     "start": "next start",
     "start-tls": "node server.js",
     "type-check": "tsc"
@@ -24,6 +23,6 @@
     "autoprefixer": "^10.3.5",
     "postcss": "^8.3.7",
     "tailwindcss": "^2.2.15",
-    "typescript": "4.0"
+    "typescript": "4.5"
   }
 }
