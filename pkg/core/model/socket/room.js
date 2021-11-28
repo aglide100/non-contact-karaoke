@@ -24,6 +24,18 @@ class Room {
         }
         return true;
     }
+    findRoom(roomID) {
+        if (Room.rooms == undefined) {
+            Room.rooms = new Array();
+        }
+        let result;
+        Room.rooms.map((room) => {
+            if (room.roomID == roomID) {
+                result = room;
+            }
+        });
+        return result;
+    }
     joinRoom(userID, roomID) {
         if (Room.rooms == undefined) {
             Room.rooms = new Array();

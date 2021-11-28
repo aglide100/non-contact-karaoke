@@ -33,6 +33,21 @@ export class Room {
     return true;
   }
 
+  public findRoom(roomID: string): roomProps | undefined {
+    if (Room.rooms == undefined) {
+      Room.rooms = new Array();
+    }
+
+    let result;
+    Room.rooms.map((room) => {
+      if (room.roomID == roomID) {
+        result = room;
+      }
+    });
+
+    return result;
+  }
+
   public joinRoom(userID: string, roomID: string): string {
     if (Room.rooms == undefined) {
       Room.rooms = new Array();
@@ -41,7 +56,14 @@ export class Room {
     Room.rooms.map((room) => {
       if (room.roomID == roomID) {
         console.log(userID + " is joined " + room.roomID);
-        room.userID.push(userID);
+
+        room.userID.map((user) => {
+          if (user == userID) {
+            console.log(userID + " is already joind room!");
+          } else {
+            room.userID.push(userID);
+          }
+        });
       }
 
       return room;

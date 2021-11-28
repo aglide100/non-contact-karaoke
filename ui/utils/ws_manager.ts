@@ -1,6 +1,6 @@
 import * as ws_config from "./ws_config";
 import * as commonType from "../common/model/socket-message";
-import { NextRouter, useRouter } from "next/router";
+import router, { NextRouter, Router } from "next/router";
 
 /*
   websocket readyState field
@@ -34,7 +34,6 @@ export class WsManager {
     this.client.onerror = this.onError;
     this.client.onmessage = this.onMessage;
     this.isInit = false;
-    // this.router = useRouter();
   }
 
   public static getInstance(): WsManager {
@@ -68,18 +67,20 @@ export class WsManager {
         userIDtemp = common.content;
       }
 
-      if (common.type === "chat") {
+      if (common.type === "res-chat-in-room") {
+        alert("get chat" + common);
       }
 
       if (common.type === "res-get-rooms") {
         const rooms: room = JSON.parse(common.content);
-        console.log("current rooms :" + rooms.roomID.length);
+
+        console.log("res-get-rooms" + common.content);
       }
 
       if (common.type === "res-join-room") {
         console.log("get res-join-room ", common);
         WsManager.roomID = common.content;
-        document.location.href = "/rooms/" + common.content;
+        router.push("/rooms/" + common.content);
       }
 
       if (common.type === "res-create-room") {
@@ -118,9 +119,19 @@ export class WsManager {
     WsManager.userID = value;
   }
 
+  public sendChatMsg(value, roomId) {
+    if (this.client.readyState === 1) {
+      this.sendMsg(value, "req-chat-in-room", roomId);
+    } else {
+      console.log(this.client.readyState);
+    }
+  }
+
   public getClientID() {
     if (this.client.readyState === 1) {
       return WsManager.userID;
+    } else {
+      console.log(this.client.readyState);
     }
 
     console.log(this.client.readyState);
@@ -131,7 +142,7 @@ export class WsManager {
     if (this.client.readyState === 1) {
       this.sendMsg("", "req-create-room", "server");
     } else {
-      // return
+      console.log(this.client.readyState);
     }
   }
 
@@ -139,7 +150,7 @@ export class WsManager {
     if (this.client.readyState === 1) {
       this.sendMsg(roomID, "req-join-room", "server");
     } else {
-      // return
+      console.log(this.client.readyState);
     }
   }
 
@@ -160,7 +171,7 @@ export class WsManager {
       this.client.send(json);
       console.log("Send MSG " + json);
     } else {
-      alert("can't find socket!");
+      console.log(this.client.readyState);
     }
   }
 }

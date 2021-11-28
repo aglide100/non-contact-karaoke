@@ -25,7 +25,7 @@ const Test: React.FC<{}> = ({}) => {
 
   useEffect(() => {
     // let newPC = new RTCPeerConnection(rtc_pc.pc_config);
-    if (init) {
+    if (!isLoaded) {
       connSocket()
         .then(function (clientTemp) {
           setTimeout(function () {
@@ -42,18 +42,6 @@ const Test: React.FC<{}> = ({}) => {
         .catch((error) => {
           console.log(error);
         });
-
-      // connSocket()
-      //   .catch((error) => {
-      //     console.log(error);
-      //   })
-      //   .then(() => {
-      //     setIsLoaded(true);
-      //     setUserID(client.getClientID());
-      //     console.log(userID);
-      //   });
-
-      // setInit(false);
     }
   });
 
@@ -63,29 +51,6 @@ const Test: React.FC<{}> = ({}) => {
       <div>room ID: </div>
 
       <div className="main__message_container">
-        {/* <input
-          id="chat_message"
-          type="text"
-          autoComplete="off"
-          placeholder="Type message here..."
-          onChange={(e) => {
-            // e.preventDefault();
-            setChatMsg(e.target.value);
-          }}
-        />
-        <div
-          id="send"
-          className="options__button"
-          onClick={(e) => {
-            e.preventDefault();
-            if (isLoaded) {
-              client.sendMsg(chatMsg, "chat", "");
-            }
-            // client.createNewRoom();
-          }}
-        >
-          Send Message!
-        </div> */}
         <div
           onClick={(e) => {
             e.preventDefault();

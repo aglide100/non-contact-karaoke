@@ -78,8 +78,18 @@ class WebSocketHandler {
                 let json = JSON.stringify(data);
                 ws.send(json);
             }
-            if (common.type === "chat") {
+            if (common.type === "req-chat-in-room") {
                 console.log("Chat" + common);
+                let resultRoom = room.Room.getInstance().findRoom(common.to);
+                resultRoom === null || resultRoom === void 0 ? void 0 : resultRoom.userID.map((user) => {
+                    let data = {
+                        type: "res-chat-in-room",
+                        to: user,
+                        from: common.from,
+                        content: common.content,
+                    };
+                    ws.send(JSON.stringify(data));
+                });
             }
             if (common.type === "answer") {
                 console.log("Answer" + common);
