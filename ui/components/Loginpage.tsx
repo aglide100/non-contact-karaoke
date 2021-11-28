@@ -28,7 +28,8 @@ function Loginpage() {
             </form>
         </div>
         );
-    }
+
+
 };
 
 export default Loginpage;
