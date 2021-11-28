@@ -1,7 +1,8 @@
 import * as ws_config from "./ws_config";
 import * as commonType from "../common/model/socket-message";
 import router, { NextRouter, Router } from "next/router";
-
+import { emit } from "process";
+import { EventEmitter } from "stream";
 /*
   websocket readyState field
 
@@ -17,15 +18,18 @@ type room = {
 
 export type cancelFunc = () => void;
 
-export class WsManager {
+export class WsManager extends EventEmitter {
   private static instance: WsManager;
   private client: WebSocket;
   private static userID: string;
   private static roomID: string;
+  private static roomIdList: string[];
   private isInit: boolean;
-  private router: NextRouter;
+  private ok: boolean;
+  private myEmiite;
 
   constructor() {
+    super();
     console.log("trying connect to " + ws_config.config.url + "....");
     this.client = new WebSocket(ws_config.config.url);
 
@@ -34,6 +38,7 @@ export class WsManager {
     this.client.onerror = this.onError;
     this.client.onmessage = this.onMessage;
     this.isInit = false;
+    // this.myEmiite = new
   }
 
   public static getInstance(): WsManager {
@@ -45,18 +50,18 @@ export class WsManager {
     return WsManager.instance;
   }
 
-  private call(fn: () => cancelFunc): cancelFunc {
-    return WsManager.getInstance().call(fn);
-  }
+  // private call(fn: () => cancelFunc): cancelFunc {
+  //   return WsManager.getInstance().call(fn);
+  // }
 
-  public static Auth(fn: () => cancelFunc): cancelFunc {
-    return this.getInstance().call((): cancelFunc => {
-      console.log("client created, yielding to call");
-      return fn();
-    });
-  }
+  // public static Auth(fn: () => cancelFunc): cancelFunc {
+  //   return this.getInstance().call((): cancelFunc => {
+  //     console.log("client created, yielding to call");
+  //     return fn();
+  //   });
+  // }
 
-  private onMessage(ev: MessageEvent) {
+  private async onMessage(ev: MessageEvent) {
     let userIDtemp;
     // let roomIDtemp
     // console.log("receive msg!" + ev.data);
@@ -72,7 +77,7 @@ export class WsManager {
       }
 
       if (common.type === "res-get-rooms") {
-        const rooms: room = JSON.parse(common.content);
+        WsManager.roomIdList = JSON.parse(common.content);
 
         console.log("res-get-rooms" + common.content);
       }
@@ -89,6 +94,8 @@ export class WsManager {
         WsManager.getInstance().joinRoom(common.content);
         // WsManager.roomID = common.content;
       }
+
+      this.ok = true;
     }
 
     if (userIDtemp != null || userIDtemp != undefined) {
@@ -108,11 +115,11 @@ export class WsManager {
     console.log("Connection opened", ev);
   }
 
-  public getRooms(): string[] {
-    var list: string[];
-    // later adding get roomlist!
-    this.sendMsg("", "req-get-rooms", "server");
-    return list;
+  public async getRooms() {
+    await this.sendMsg("", "req-get-rooms", "server");
+    // this.ok = false;
+
+    return WsManager.roomIdList;
   }
 
   public setUserID(value) {
@@ -154,7 +161,7 @@ export class WsManager {
     }
   }
 
-  public sendMsg(
+  public async sendMsg(
     text: string,
     type: commonType.socketMsgType,
     to: string

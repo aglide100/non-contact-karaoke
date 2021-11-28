@@ -43,7 +43,14 @@ class Room {
         Room.rooms.map((room) => {
             if (room.roomID == roomID) {
                 console.log(userID + " is joined " + room.roomID);
-                room.userID.push(userID);
+                room.userID.map((user) => {
+                    if (user == userID) {
+                        console.log(userID + " is already joind room!");
+                    }
+                    else {
+                        room.userID.push(userID);
+                    }
+                });
             }
             return room;
         });

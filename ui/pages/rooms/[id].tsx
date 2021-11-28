@@ -10,6 +10,7 @@ let client: ws_manager.WsManager;
 const Room: React.FC = ({}) => {
   const router = useRouter();
   const { id } = router.query;
+  //const { pw } = router.query;
 
   const [chatMsg, setChatMsg] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
