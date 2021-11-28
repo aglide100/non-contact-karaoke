@@ -28,4 +28,4 @@ jobs:
           platforms: linux/amd64,linux/arm64
           push: true
           tags: |
-            aglide100/contact-free-karaoke--nginx:latest
+            aglide100/non-contact-karaoke--nginx:latest
