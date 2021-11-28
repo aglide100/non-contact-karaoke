@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
-import { CurRoomStyle, TitleStyle } from "./roomStyle";
+import { CurRoomStyle, TitleStyle } from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
 
@@ -12,29 +12,35 @@ const Rooms: React.FC = ({}) => {
   const [roomListData, setRoomListData] = useState([]);
 
   async function getWsManager() {
-    var clientTemp = await ws_manager.WsManager.getInstance();
-    return clientTemp;
+    return await ws_manager.WsManager.getInstance();
   }
 
   useEffect(() => {
     if (!isLoaded) {
       getWsManager().then(function (clientTemp) {
-        let list;
-        clientTemp.on("res-get-rooms", () => {
-          list = clientTemp.getRoomIdList();
-          console.log("list!" + list);
-          setRoomListData(list);
-
-          setIsLoaded(true);
-        });
-
-        // clientTemp.emit("res-get-rooms");
-        clientTemp.getRooms();
-
-        // console.log("list : ", list);
+        
 
         return (client = clientTemp);
-      });
+        
+
+      }).finally(() => {
+        if (client != undefined) {
+          let list;
+          client.on("res-get-rooms", () => {
+            list = client.getRoomIdList();
+            console.log("list!" + list);
+            setRoomListData(list);
+  
+            setIsLoaded(true);
+          });
+  
+          // client.emit("res-get-rooms");
+          client.getRooms();
+  
+          // console.log("list : ", list);
+        }
+ 
+      })
     }
     return () => setIsLoaded(true);
   }, []);
