@@ -3,9 +3,10 @@ import * as http from "http";
 import express from "express";
 import { IncomingMessage } from "http";
 import * as uuid from "uuid";
-import * as commonType from "../../ui/common/model/socket-message";
+import * as commonType from "../../ui/common/socket-message";
 import * as room from "./model/socket/room";
 import { WebSocketHandler } from "./handler/webSocketHandler";
+import { MemberController } from "./v1/controller/memberController";
 
 var session = require("express-session");
 
@@ -31,7 +32,13 @@ export class Server {
     console.log("starting create socket");
     this.app = express();
     this.users = new Array();
+    const cors = require("cors");
+    this.app.use(cors());
+    // const MemberCtrl = new MemberController();
 
+    // this.app.get("/api/member", MemberCtrl.list());
+    // this.app.post("/api/member/join", MemberCtrl.join());
+    // this.app.post("/api/member/login", MemberCtrl.login);
     console.log("user: ", this.users);
 
     this.server = http.createServer(this.app);
@@ -52,8 +59,8 @@ export class Server {
 
   private onConnection(ws: WebSocket, req: IncomingMessage) {
     // console.log(ws);
-    // console.log(req);
     // req 쿠키나 세션 체크
+
     const newUUID = uuid.v4();
     let data: commonType.socketMessage = {
       type: "conn",
@@ -94,6 +101,8 @@ export class Server {
 
   public listen() {
     console.log("listening on " + this.DEFAULT_PORT);
+    // this.app.listen(this.DEFAULT_PORT);
+    // this.server.addListener("")
     this.server.listen(this.DEFAULT_PORT);
   }
 }

@@ -1,8 +1,7 @@
 import * as ws_config from "./ws_config";
-import * as commonType from "../common/model/socket-message";
+import * as commonType from "../common/socket-message";
 import router, { NextRouter, Router } from "next/router";
-import { emit } from "process";
-import { EventEmitter } from "stream";
+import { EventEmitter } from "events";
 /*
   websocket readyState field
 
@@ -25,8 +24,6 @@ export class WsManager extends EventEmitter {
   private static roomID: string;
   private static roomIdList: string[];
   private isInit: boolean;
-  private ok: boolean;
-  private myEmiite;
 
   constructor() {
     super();
@@ -38,28 +35,18 @@ export class WsManager extends EventEmitter {
     this.client.onerror = this.onError;
     this.client.onmessage = this.onMessage;
     this.isInit = false;
-    // this.myEmiite = new
   }
 
   public static getInstance(): WsManager {
     if (!WsManager.instance) {
       console.log("creating WsManger instance!");
       WsManager.instance = new WsManager();
+
+      // WsManager.instance.eventTest();
     }
 
     return WsManager.instance;
   }
-
-  // private call(fn: () => cancelFunc): cancelFunc {
-  //   return WsManager.getInstance().call(fn);
-  // }
-
-  // public static Auth(fn: () => cancelFunc): cancelFunc {
-  //   return this.getInstance().call((): cancelFunc => {
-  //     console.log("client created, yielding to call");
-  //     return fn();
-  //   });
-  // }
 
   private async onMessage(ev: MessageEvent) {
     let userIDtemp;
@@ -79,7 +66,8 @@ export class WsManager extends EventEmitter {
       if (common.type === "res-get-rooms") {
         WsManager.roomIdList = JSON.parse(common.content);
 
-        console.log("res-get-rooms" + common.content);
+        WsManager.instance.emit("res-get-rooms");
+        // console.log("res-get-rooms" + common.content);
       }
 
       if (common.type === "res-join-room") {
@@ -94,8 +82,6 @@ export class WsManager extends EventEmitter {
         WsManager.getInstance().joinRoom(common.content);
         // WsManager.roomID = common.content;
       }
-
-      this.ok = true;
     }
 
     if (userIDtemp != null || userIDtemp != undefined) {
@@ -118,7 +104,9 @@ export class WsManager extends EventEmitter {
   public async getRooms() {
     await this.sendMsg("", "req-get-rooms", "server");
     // this.ok = false;
+  }
 
+  public getRoomIdList(): string[] {
     return WsManager.roomIdList;
   }
 
@@ -145,9 +133,9 @@ export class WsManager extends EventEmitter {
     return null;
   }
 
-  public createNewRoom() {
+  public createNewRoom(roomTitle: string) {
     if (this.client.readyState === 1) {
-      this.sendMsg("", "req-create-room", "server");
+      this.sendMsg(roomTitle, "req-create-room", "server");
     } else {
       console.log(this.client.readyState);
     }

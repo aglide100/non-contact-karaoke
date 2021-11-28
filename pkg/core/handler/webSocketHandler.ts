@@ -1,7 +1,7 @@
-import * as commonType from "../../../ui/common/model/socket-message";
+import * as commonType from "../../../ui/common/socket-message";
 import * as room from "../model/socket/room";
 import * as uuid from "uuid";
-import * as user from "../model/socket/user";
+// import * as user from "../model/socket/user";
 
 export class WebSocketHandler {
   public onClose(ws: WebSocket, ev: CloseEvent): void {}
@@ -14,7 +14,11 @@ export class WebSocketHandler {
       if (common.type === "req-create-room") {
         console.log("someone call create room");
         const newUUID = uuid.v4();
-        const newRoom: room.roomProps = { roomID: newUUID, userID: [] };
+        const newRoom: room.roomProps = {
+          roomID: newUUID,
+          roomTitle: common.content,
+          userID: [],
+        };
         newRoom.userID.push(common.from);
         room.Room.getInstance().newRoom(newRoom);
 
@@ -58,7 +62,11 @@ export class WebSocketHandler {
         const roomIDs = room.Room.getInstance()
           .getRooms()
           .map((room) => {
-            return room.roomID;
+            let data = {
+              roomId: room.userID,
+              roomTitle: room.roomTitle,
+            };
+            return data;
           });
 
         console.log("request room list");

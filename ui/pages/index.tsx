@@ -2,7 +2,6 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Layout from "../components/Layout";
 import dynamic from "next/dynamic";
-import "tailwindcss/tailwind.css";
 
 const RoomList = dynamic(
   () =>
@@ -16,15 +15,15 @@ const RoomList = dynamic(
 );
 const IndexPage: React.FC<{}> = ({}) => {
   return (
-    <Layout title="Home | Next.js + TypeScript Example">
+    <>
       <h1>Hello Next.js 👋</h1>
       <p>
-        <Link href="/about">
-          <a>About</a>
+        <Link href="/login">
+          <a>로그인하기</a>
         </Link>
       </p>
-      <RoomList></RoomList>
-    </Layout>
+      {/* <RoomList></RoomList> */}
+    </>
   );
 };
 

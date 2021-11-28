@@ -36,6 +36,12 @@ class Server {
         console.log("starting create socket");
         this.app = (0, express_1.default)();
         this.users = new Array();
+        const cors = require("cors");
+        this.app.use(cors());
+        // const MemberCtrl = new MemberController();
+        // this.app.get("/api/member", MemberCtrl.list());
+        // this.app.post("/api/member/join", MemberCtrl.join());
+        // this.app.post("/api/member/login", MemberCtrl.login);
         console.log("user: ", this.users);
         this.server = http.createServer(this.app);
         this.socket = new ws.Server({
@@ -51,7 +57,6 @@ class Server {
     }
     onConnection(ws, req) {
         // console.log(ws);
-        // console.log(req);
         // req 쿠키나 세션 체크
         const newUUID = uuid.v4();
         let data = {
@@ -89,6 +94,8 @@ class Server {
     }
     listen() {
         console.log("listening on " + this.DEFAULT_PORT);
+        // this.app.listen(this.DEFAULT_PORT);
+        // this.server.addListener("")
         this.server.listen(this.DEFAULT_PORT);
     }
 }

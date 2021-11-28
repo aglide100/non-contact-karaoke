@@ -22,6 +22,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebSocketHandler = void 0;
 const room = __importStar(require("../model/socket/room"));
 const uuid = __importStar(require("uuid"));
+// import * as user from "../model/socket/user";
 class WebSocketHandler {
     onClose(ws, ev) { }
     onMessage(ws, ev) {
@@ -31,7 +32,11 @@ class WebSocketHandler {
             if (common.type === "req-create-room") {
                 console.log("someone call create room");
                 const newUUID = uuid.v4();
-                const newRoom = { roomID: newUUID, userID: [] };
+                const newRoom = {
+                    roomID: newUUID,
+                    roomTitle: common.content,
+                    userID: [],
+                };
                 newRoom.userID.push(common.from);
                 room.Room.getInstance().newRoom(newRoom);
                 let data = {
@@ -66,7 +71,11 @@ class WebSocketHandler {
                 const roomIDs = room.Room.getInstance()
                     .getRooms()
                     .map((room) => {
-                    return room.roomID;
+                    let data = {
+                        roomId: room.userID,
+                        roomTitle: room.roomTitle,
+                    };
+                    return data;
                 });
                 console.log("request room list");
                 let data = {
