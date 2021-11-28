@@ -14,7 +14,8 @@ function Loginpage() {
 
  
         return (
-            <div style={{display:'flex', justifyContent:'center', alignItems:'center', width: '100%', height:'100vh'}}>
+            <div className="flex justify-content text-center w-full h-screen"}>
+
             <form style={{display: 'flex', flexDirection: 'column'}} onSubmit={onSubmitHandler}>
             <label>ID</label>
             <input type="email" value={Email} onChange={onEmailHandler} />
