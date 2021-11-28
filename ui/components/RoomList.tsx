@@ -31,10 +31,10 @@ const Test: React.FC<{}> = ({}) => {
           setTimeout(function () {
             setIsLoaded(true);
             setUserID(clientTemp.getClientID());
-            let list = client.getRooms();
-            if (list != undefined) {
-              alert(list);
-            }
+            // let list = client.getRooms();
+            // if (list != undefined) {
+            //   alert(list);
+            // }
           }, 1500);
 
           return (client = clientTemp);

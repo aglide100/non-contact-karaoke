@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
-import { TitleStyle, CurRoomStyle } from "./roomStyle";
+import { CurRoomStyle, TitleStyle } from "./roomStyle";
 
 let client: ws_manager.WsManager;
 
@@ -20,9 +20,10 @@ const Rooms: React.FC = ({}) => {
     if (!isLoaded) {
       getWsManager().then(function (clientTemp) {
         let list;
-        client.getRooms().then((roomIds) => {
+        clientTemp.getRooms().then((roomIds) => {
           list = roomIds;
         });
+        console.log("list : ", list);
 
         setRoomListData(list);
 
@@ -31,18 +32,22 @@ const Rooms: React.FC = ({}) => {
     }
   });
 
-  roomList = roomListData.map((room, index) => {
-    return (
-      <RoomItem
-        key={index}
-        roomId={room.roomId}
-        roomTitle={index.toString()}
-        onHandleClick={(roomId) => {
-          onHandleClick(roomId);
-        }}
-      ></RoomItem>
-    );
-  });
+  if (roomListData != undefined) {
+    roomList = roomListData.map((room, index) => {
+      if (!room) {
+        return (
+          <RoomItem
+            key={index}
+            roomId={room.roomId}
+            roomTitle={index.toString()}
+            onHandleClick={(roomId) => {
+              onHandleClick(roomId);
+            }}
+          ></RoomItem>
+        );
+      }
+    });
+  }
 
   function onHandleClick(roomId) {
     // 서버가 없어서 임시 룸아이디를 넣음
