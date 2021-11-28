@@ -24,27 +24,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Server = void 0;
 const ws = __importStar(require("ws"));
-const fs_1 = __importDefault(require("fs"));
-const https = __importStar(require("https"));
+const http = __importStar(require("http"));
 const express_1 = __importDefault(require("express"));
 const uuid = __importStar(require("uuid"));
 const room = __importStar(require("./model/socket/room"));
 const webSocketHandler_1 = require("./handler/webSocketHandler");
 var session = require("express-session");
-const cred = {
-    key: fs_1.default.readFileSync("./keys/server.key"),
-    cert: fs_1.default.readFileSync("./keys/server.crt"),
-    ca: fs_1.default.readFileSync("./keys/ca.key"),
-};
 class Server {
     constructor() {
-        this.DEFAULT_PORT = 5000;
+        this.DEFAULT_PORT = 8888;
         console.log("starting create socket");
         this.app = (0, express_1.default)();
-        // this.rooms = new Array();
         this.users = new Array();
         console.log("user: ", this.users);
-        this.server = https.createServer(cred, this.app);
+        this.server = http.createServer(this.app);
         this.socket = new ws.Server({
             server: this.server,
         });

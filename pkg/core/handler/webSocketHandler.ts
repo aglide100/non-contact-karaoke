@@ -36,9 +36,22 @@ export class WebSocketHandler {
 
         // } else {
 
-        room.Room.getInstance().joinRoom(common.from, common.content);
-        // user.User.getInstance().setUserInRoomID()
-        // }
+        let roomId = room.Room.getInstance().joinRoom(
+          common.from,
+          common.content
+        );
+        if (room.Room.getInstance().findUser(common.from)) {
+          let data: commonType.socketMessage = {
+            type: "res-join-room",
+            to: common.from,
+            from: "server",
+            content: roomId,
+          };
+
+          ws.send(JSON.stringify(data));
+        } else {
+          console.log("Can't joined user in room....");
+        }
       }
 
       if (common.type === "req-get-rooms") {
@@ -61,8 +74,20 @@ export class WebSocketHandler {
         ws.send(json);
       }
 
-      if (common.type === "chat") {
+      if (common.type === "req-chat-in-room") {
         console.log("Chat" + common);
+        let resultRoom = room.Room.getInstance().findRoom(common.to);
+
+        resultRoom?.userID.map((user) => {
+          let data: commonType.socketMessage = {
+            type: "res-chat-in-room",
+            to: user,
+            from: common.from,
+            content: common.content,
+          };
+
+          ws.send(JSON.stringify(data));
+        });
       }
 
       if (common.type === "answer") {

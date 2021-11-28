@@ -1,6 +1,5 @@
 import * as ws from "ws";
-import fs from "fs";
-import * as https from "https";
+import * as http from "http";
 import express from "express";
 import { IncomingMessage } from "http";
 import * as uuid from "uuid";
@@ -9,15 +8,6 @@ import * as room from "./model/socket/room";
 import { WebSocketHandler } from "./handler/webSocketHandler";
 
 var session = require("express-session");
-
-const cred = {
-  // key: fs.readFileSync("./keys/server.key"),
-  // cert: fs.readFileSync("./keys/server.crt"),
-  // ca: fs.readFileSync("./keys/ca.key"),
-  ca: fs.readFileSync("./keys/fullchain1.pem"),
-  key: fs.readFileSync("./keys/privkey1.pem"),
-  cert: fs.readFileSync("./keys/cert1.pem"),
-};
 
 type user = {
   userId: string;
@@ -30,25 +20,21 @@ type room = {
 };
 
 export class Server {
-  private readonly DEFAULT_PORT = 5000;
+  private readonly DEFAULT_PORT = 8888;
   private socket: ws.Server;
-  private server: https.Server;
+  private server: http.Server;
   private app: express.Application;
   private websocketHandler: WebSocketHandler;
   private users: user[];
 
-  private static isLoaded: boolean;
-
   constructor() {
     console.log("starting create socket");
     this.app = express();
-    // this.rooms = new Array();
     this.users = new Array();
 
     console.log("user: ", this.users);
 
-    this.server = https.createServer(cred, this.app);
-
+    this.server = http.createServer(this.app);
     this.socket = new ws.Server({
       server: this.server,
     });

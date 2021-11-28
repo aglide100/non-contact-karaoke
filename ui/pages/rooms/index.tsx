@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, {ReactElement, useState} from "react";
 import * as ws_manager from "../../utils/ws_manager";
 // import "./App.css";
@@ -50,6 +51,9 @@ const tempRoomList: RoomItemProps[] = [
     roomTitle: "6번방",
   },
 ];
+=======
+import React from "react";
+>>>>>>> origin/main
 
 const Rooms: React.FC = ({}) => {
   let roomList: ReactElement[];

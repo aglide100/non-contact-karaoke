@@ -8,10 +8,10 @@ services:
     build:
       context: ./ui
     hostname: node
-    volumes:
-      - <<: *services-volume
-        source: ./keys
-        target: /usr/src/keys
+    # volumes:
+    #   - <<: *services-volume
+    #     source: ./common
+    #     target: /usr/src/common
     networks:
       - docker_network
     ports:

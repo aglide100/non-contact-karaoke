@@ -24,6 +24,18 @@ class Room {
         }
         return true;
     }
+    findRoom(roomID) {
+        if (Room.rooms == undefined) {
+            Room.rooms = new Array();
+        }
+        let result;
+        Room.rooms.map((room) => {
+            if (room.roomID == roomID) {
+                result = room;
+            }
+        });
+        return result;
+    }
     joinRoom(userID, roomID) {
         if (Room.rooms == undefined) {
             Room.rooms = new Array();
@@ -35,6 +47,23 @@ class Room {
             }
             return room;
         });
+        return roomID;
+    }
+    findUser(userID) {
+        if (Room.rooms == undefined) {
+            Room.rooms = new Array();
+            console.log("there's no room!");
+            return false;
+        }
+        let ok = false;
+        Room.rooms.map((room) => {
+            room.userID.map((user) => {
+                if (user == userID) {
+                    ok = true;
+                }
+            });
+        });
+        return ok;
     }
     leftUser(userID) {
         if (Room.rooms == undefined) {
@@ -42,23 +71,49 @@ class Room {
         }
         Room.rooms = Room.rooms.filter((room) => {
             return room.userID.filter((user) => {
-                if (user == userID) {
-                    //   passed
+                var isAlone;
+                if (room.userID.length == 1) {
+                    isAlone = true;
                 }
                 else {
+                    isAlone = false;
+                }
+                if (user == userID) {
+                    //   passed
+                    console.log("left user in room");
+                    if (Room.rooms.length > 0) {
+                        Room.rooms.length = Room.rooms.length - 1;
+                    }
+                }
+                else {
+                    isAlone = false;
                     return user;
                 }
             });
         });
         this.deleteUnUsedRoom();
     }
+    deleteRoom(roomID) {
+        if (Room.rooms == undefined) {
+            Room.rooms = new Array();
+        }
+        Room.rooms = Room.rooms.filter((room) => {
+            if (room.roomID == roomID) {
+                // passed
+            }
+            else {
+                return;
+            }
+        });
+    }
     deleteUnUsedRoom() {
         if (Room.rooms == undefined) {
             Room.rooms = new Array();
         }
         Room.rooms = Room.rooms.filter((room) => {
-            if (room.userID == null) {
+            if (room.userID.length == 0) {
                 console.log("room removed");
+                Room.rooms.length--;
             }
             else {
                 return room;
