@@ -22,6 +22,7 @@ export class WsManager {
   private client: WebSocket;
   private static userID: string;
   private static roomID: string;
+  private static roomIdList: string[];
   private isInit: boolean;
   private router: NextRouter;
 
@@ -72,7 +73,7 @@ export class WsManager {
       }
 
       if (common.type === "res-get-rooms") {
-        const rooms: room = JSON.parse(common.content);
+        WsManager.roomIdList = JSON.parse(common.content);
 
         console.log("res-get-rooms" + common.content);
       }
@@ -108,11 +109,10 @@ export class WsManager {
     console.log("Connection opened", ev);
   }
 
-  public getRooms(): string[] {
-    var list: string[];
-    // later adding get roomlist!
-    this.sendMsg("", "req-get-rooms", "server");
-    return list;
+  public async getRooms() {
+    await this.sendMsg("", "req-get-rooms", "server");
+
+    return WsManager.roomIdList;
   }
 
   public setUserID(value) {
@@ -154,7 +154,7 @@ export class WsManager {
     }
   }
 
-  public sendMsg(
+  public async sendMsg(
     text: string,
     type: commonType.socketMsgType,
     to: string

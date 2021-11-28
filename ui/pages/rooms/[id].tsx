@@ -37,10 +37,6 @@ const Room: React.FC = ({}) => {
 
   return (
     <>
-<<<<<<< HEAD
-      <div className="text-green-500">Room id : {id}</div>
-       
-=======
       <div className="text-green-500">room id : {id}</div>
       <video id="camera" autoPlay={true} playsInline={true}></video>
       <canvas id="photo"></canvas>
@@ -64,7 +60,6 @@ const Room: React.FC = ({}) => {
       >
         Send Message!
       </div>
->>>>>>> origin/main
     </>
   );
 };
