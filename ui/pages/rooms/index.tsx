@@ -20,32 +20,37 @@ const Rooms: React.FC = ({}) => {
     if (!isLoaded) {
       getWsManager().then(function (clientTemp) {
         let list;
-        clientTemp.getRooms().then((roomIds) => {
-          list = roomIds;
-        });
-        console.log("list : ", list);
+        clientTemp.on("res-get-rooms", () => {
+          list = clientTemp.getRoomIdList();
+          console.log("list!" + list);
+          setRoomListData(list);
 
-        setRoomListData(list);
+          setIsLoaded(true);
+        });
+
+        // clientTemp.emit("res-get-rooms");
+        clientTemp.getRooms();
+
+        // console.log("list : ", list);
 
         return (client = clientTemp);
       });
     }
-  });
+    return () => setIsLoaded(true);
+  }, []);
 
-  if (roomListData != undefined) {
+  if (roomListData != undefined && isLoaded) {
     roomList = roomListData.map((room, index) => {
-      if (!room) {
-        return (
-          <RoomItem
-            key={index}
-            roomId={room.roomId}
-            roomTitle={index.toString()}
-            onHandleClick={(roomId) => {
-              onHandleClick(roomId);
-            }}
-          ></RoomItem>
-        );
-      }
+      return (
+        <RoomItem
+          key={index}
+          roomId={room.roomId}
+          roomTitle={room.roomTitle}
+          onHandleClick={(room) => {
+            onHandleClick(room);
+          }}
+        ></RoomItem>
+      );
     });
   }
 
@@ -56,7 +61,7 @@ const Rooms: React.FC = ({}) => {
 
   return (
     <div>
-      <h1 style={TitleStyle}>title</h1>
+      {/* <h1 style={TitleStyle}>title</h1> */}
 
       <div className="flex-direction: column">
         <div>

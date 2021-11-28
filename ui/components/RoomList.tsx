@@ -11,7 +11,7 @@ const Test: React.FC<{}> = ({}) => {
   const [init, setInit] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const [userID, setUserID] = useState("");
-  const [roomID, setRoomID] = useState("");
+  const [roomTitle, setRoomTitle] = useState("");
   const [rooms, setRooms] = useState([]);
   // const [chatMsg, setChatMsg] = useState("");
 
@@ -31,11 +31,7 @@ const Test: React.FC<{}> = ({}) => {
           setTimeout(function () {
             setIsLoaded(true);
             setUserID(clientTemp.getClientID());
-            // let list = client.getRooms();
-            // if (list != undefined) {
-            //   alert(list);
-            // }
-          }, 1500);
+          }, 1000);
 
           return (client = clientTemp);
         })
@@ -51,11 +47,18 @@ const Test: React.FC<{}> = ({}) => {
       <div>room ID: </div>
 
       <div className="main__message_container">
+        <input
+          value={roomTitle}
+          onChange={(e) => {
+            setRoomTitle(e.target.value);
+          }}
+          placeholder="방 제목을 입력해주세요!"
+        />
         <div
           onClick={(e) => {
             e.preventDefault();
             if (isLoaded) {
-              client.createNewRoom();
+              client.createNewRoom(roomTitle);
             }
           }}
         >

@@ -1,5 +1,6 @@
 export type roomProps = {
   roomID: string;
+  roomTitle: string;
   userID: string[];
 };
 
