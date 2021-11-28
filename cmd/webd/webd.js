@@ -4,27 +4,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-// const server = express();
-const port = 3000;
-class Webd {
-    constructor() {
-        this.server = (0, express_1.default)();
-    }
-}
-const server = new Webd().server;
-server.get("/", (req, res) => {
-    res.send("Hello world with express!");
-});
-server.get("/sum-start", (req, res) => {
-    console.time("duration");
-    var sum = 0;
-    for (var i = 0; i < 100; i++) {
-        sum += i;
-    }
-    res.send("sum is " + sum + console.timeLog("duration") + "at over!");
-    console.timeEnd("duration");
-    console.log(sum);
-});
+const path_1 = __importDefault(require("path"));
+const port = 3500;
+const uiPath = path_1.default.join(__dirname, "../../ui/out");
+const server = (0, express_1.default)();
+server.use(express_1.default.static(uiPath));
+server.use("/next", express_1.default.static(path_1.default.join(__dirname, "../../ui/.next")));
 server.listen(port, () => {
-    console.log("Server listing on ", port);
+    console.log("static webd on at http://localhost:" + port);
 });

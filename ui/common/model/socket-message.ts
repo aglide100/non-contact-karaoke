@@ -8,11 +8,13 @@ export type socketMessage = {
 // conn is using onConnection
 export type socketMsgType =
   | "announce"
-  | "chat"
-  | "req-get-rooms"
+  | "req-chat-in-room"
+  | "res-chat-in-room"
   | "res-get-rooms"
-  | "req-create-room"
   | "res-create-room"
+  | "res-join-room"
+  | "req-get-rooms"
+  | "req-create-room"
   | "req-delete-room"
   | "req-join-room"
   | "left-room"

@@ -1,10 +1,10 @@
 # /bin/bash/shell
 
-npm run build 
-npm run start &
-
 cd ./ui
 
-npm run build
-npm run start-tls 
-cd ../
+npm run make
+
+cd ..
+
+npm run build 
+npm run start 

@@ -2,6 +2,8 @@ FROM node:lts-alpine
 
 WORKDIR /usr/src/app
 
+RUN pwd
+
 COPY package*.json ./
 
 COPY . . 
