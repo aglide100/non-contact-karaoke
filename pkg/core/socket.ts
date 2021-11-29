@@ -6,7 +6,6 @@ import * as uuid from "uuid";
 import * as commonType from "../../ui/common/socket-message";
 import * as room from "./model/socket/room";
 import { WebSocketHandler } from "./handler/webSocketHandler";
-import { MemberController } from "./v1/controller/memberController";
 
 var session = require("express-session");
 
@@ -34,11 +33,6 @@ export class Server {
     this.users = new Array();
     const cors = require("cors");
     this.app.use(cors());
-    // const MemberCtrl = new MemberController();
-
-    // this.app.get("/api/member", MemberCtrl.list());
-    // this.app.post("/api/member/join", MemberCtrl.join());
-    // this.app.post("/api/member/login", MemberCtrl.login);
     console.log("user: ", this.users);
 
     this.server = http.createServer(this.app);
@@ -61,21 +55,20 @@ export class Server {
     // console.log(ws);
     // req 쿠키나 세션 체크
 
-    const newUUID = uuid.v4();
-    let data: commonType.socketMessage = {
-      type: "conn",
-      to: "",
-      from: "server",
-      // 임시로 uuid발급!
-      content: newUUID,
-    };
-    let json = JSON.stringify(data);
-
-    const newUser: user = { userId: newUUID, socket: ws };
+    // const newUUID = uuid.v4();
+    // let data: commonType.socketMessage = {
+    //   type: "conn",
+    //   to: "",
+    //   from: "server",
+    //   // 임시로 uuid발급!
+    //   content: newUUID,
+    // };
+    // let json = JSON.stringify(data);
+    // this.users.push(newUser);
+    // ws.send(json);
+    // const newUser: user = { userId: newUUID, socket: ws };
     console.log("current users", this.users.length);
     console.log("current rooms", room.Room.getInstance().getRooms().length);
-    this.users.push(newUser);
-    ws.send(json);
 
     ws.onmessage = (ev: MessageEvent) => {
       this.websocketHandler.onMessage(ws, ev);

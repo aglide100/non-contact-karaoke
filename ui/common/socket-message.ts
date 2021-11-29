@@ -14,6 +14,8 @@ export type socketMsgType =
   | "res-create-room"
   | "res-join-room"
   | "req-get-rooms"
+  | "req-login-user"
+  | "res-login-user"
   | "req-create-room"
   | "req-delete-room"
   | "req-join-room"
