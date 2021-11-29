@@ -63,6 +63,10 @@ export class WsManager extends EventEmitter {
         alert("get chat" + common);
       }
 
+      if (common.type === "res-login-user") {
+        WsManager.instance.emit("res-login-user");
+      }
+
       if (common.type === "res-get-rooms") {
         WsManager.roomIdList = JSON.parse(common.content);
 
