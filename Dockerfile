@@ -8,8 +8,17 @@ COPY . .
 
 RUN npm install --no-optional
 
+
 RUN npm run build
 
-EXPOSE 5000
+WORKDIR /usr/src/app/ui
+
+RUN npm install --no-optional
+
+WORKDIR /usr/src/app
+
+EXPOSE 3500
+
+EXPOSE 8888
 
 CMD "npm" "run" "start"
