@@ -9,8 +9,7 @@ export type RoomItemProps = {
 
 const RoomItem: React.FC<RoomItemProps> = (props: RoomItemProps) => {
   return (
-    
-    <li className="flex-direction: column">
+    <li>
       <div style = {ListStyle}
             onClick={(e) => {
           e.preventDefault();

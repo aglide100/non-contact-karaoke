@@ -9,7 +9,7 @@ export const TitleStyle = {
 };
 
 export const ListStyle = {
-  width: '200px',
+  width: '320px',
   color: "white",
   background: "#505050",
   padding: "10px 10px",
@@ -17,27 +17,48 @@ export const ListStyle = {
   borderRadius: "6px",
   fontSize: "20px",
   lineHeight: 1.5,
-  margin: '10px'
+  margin: '36px',
 };
 
-export const OverCurRoon = {
-   border: "solid silver",
-   width:"305px",
-   height: "500px"
+export const RoomFrame = {
+   width: "100%",
+   height: "100%",
+   border: "solid white",
+};
+
+export const InnerRoomFrame = {
+   display: "flex",
+   justifyContent: "center"
 }
 
+export const RoomListFrame = {
+   border: "solid silver",
+   width: "400px",
+   height: "600px",
+   margin: "10px"
+}
+
+export const CurRoomStyleFrame = {
+  border: "solid silver", 
+  width: "400px", 
+  height: "600px",
+  margin: "10px"
+}
 export const CurRoomStyle = {
   color: "white",
-  width: "300px",
+  width: "395px",
+  height: "60px",
   background: "#32AAFF",
-  padding: "10px 65px",
-  border: "silver",
-  fontSize: "18px",
+  padding: "15px 90px",
+  borderRadius: "2px",
+  borderBottom: "solid #32AAFF",
+  fontSize: "20px",
 };
 
 export const ParStyle = {
-  border: "solid silver", 
-  height : "50px", 
+  border: "solid silver",
+  width: "395px",
+  height: "55px", 
   padding: "10px 10px",
 };
 

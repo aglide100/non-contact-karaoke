@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
 
-import { CurRoomStyle, TitleStyle, ParStyle, OverCurRoon } from "../../components/roomStyle";
+import { CurRoomStyle, TitleStyle, ParStyle, RoomFrame, InnerRoomFrame, RoomListFrame, CurRoomStyleFrame } from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
 
@@ -67,14 +67,13 @@ const Rooms: React.FC = ({}) => {
   }
 
   return (
-    <div style ={OverCurRoon}>
+    <div style ={RoomFrame}>
       {/* { <h1 style={TitleStyle}>title</h1> } */}
-
-      <div className="flex-direction: column">
-        <div>
+      <div style= {InnerRoomFrame}>
+        <div style={RoomListFrame}>
           <ul>{roomList}</ul>
         </div>
-        <div>
+        <div style = {CurRoomStyleFrame}>
           <div style={CurRoomStyle}>@번 방의 현재 상황</div>
           <div style = {ParStyle}>참여자 - @명 이용중</div>
           {userList == undefined ? <>인원이 없습니다!</> : <>{userList}</>}
