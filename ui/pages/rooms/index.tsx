@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
-import { CurRoomStyle, TitleStyle } from "./roomStyle";
+import { CurRoomStyle, TitleStyle, ParStyle, OverCurRoon } from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
 
@@ -12,29 +12,35 @@ const Rooms: React.FC = ({}) => {
   const [roomListData, setRoomListData] = useState([]);
 
   async function getWsManager() {
-    var clientTemp = await ws_manager.WsManager.getInstance();
-    return clientTemp;
+    return await ws_manager.WsManager.getInstance();
   }
 
   useEffect(() => {
     if (!isLoaded) {
       getWsManager().then(function (clientTemp) {
-        let list;
-        clientTemp.on("res-get-rooms", () => {
-          list = clientTemp.getRoomIdList();
-          console.log("list!" + list);
-          setRoomListData(list);
-
-          setIsLoaded(true);
-        });
-
-        // clientTemp.emit("res-get-rooms");
-        clientTemp.getRooms();
-
-        // console.log("list : ", list);
+        
 
         return (client = clientTemp);
-      });
+        
+
+      }).finally(() => {
+        if (client != undefined) {
+          let list;
+          client.on("res-get-rooms", () => {
+            list = client.getRoomIdList();
+            console.log("list!" + list);
+            setRoomListData(list);
+  
+            setIsLoaded(true);
+          });
+  
+          // client.emit("res-get-rooms");
+          client.getRooms();
+  
+          // console.log("list : ", list);
+        }
+ 
+      })
     }
     return () => setIsLoaded(true);
   }, []);
@@ -60,16 +66,16 @@ const Rooms: React.FC = ({}) => {
   }
 
   return (
-    <div>
-      {/* <h1 style={TitleStyle}>title</h1> */}
+    <div style ={OverCurRoon}>
+      {/* { <h1 style={TitleStyle}>title</h1> } */}
 
       <div className="flex-direction: column">
         <div>
           <ul>{roomList}</ul>
         </div>
         <div>
-          <div style={CurRoomStyle}>방의 현재 상황</div>
-          <div>참여자</div>
+          <div style={CurRoomStyle}>@번 방의 현재 상황</div>
+          <div style = {ParStyle}>참여자 - @명 이용중</div>
           {userList == undefined ? <>인원이 없습니다!</> : <>{userList}</>}
         </div>
       </div>

@@ -22,7 +22,7 @@ const IndexPage: React.FC<{}> = ({}) => {
           <a>로그인하기</a>
         </Link>
       </p>
-      {/* <RoomList></RoomList> */}
+      <RoomList></RoomList>
     </>
   );
 };
