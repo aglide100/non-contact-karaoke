@@ -1,4 +1,4 @@
 export const config = {
-  url: "ws://localhost:8888",
-  // url: "wss://like-a-junk.com:5000",
+  // url: "ws://192.168.0.111:8888",
+  url: "wss://wss.non-contact-karaoke.xyz",
 };

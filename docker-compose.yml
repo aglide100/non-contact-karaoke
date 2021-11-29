@@ -3,19 +3,19 @@ x-services-volume: &services-volume
   type: bind
 
 services:
-  node:
-    container_name: node
-    build:
-      context: ./ui
-    hostname: node
-    # volumes:
-    #   - <<: *services-volume
-    #     source: ./common
-    #     target: /usr/src/common
-    networks:
-      - docker_network
-    ports:
-      - 3000:3000
+  # node:
+  #   container_name: node
+  #   build:
+  #     context: ./ui
+  #   hostname: node
+  #   # volumes:
+  #   #   - <<: *services-volume
+  #   #     source: ./common
+  #   #     target: /usr/src/common
+  #   networks:
+  #     - docker_network
+  #   ports:
+  #     - 3000:3000
   wss:
     container_name: wss
     build:
@@ -24,15 +24,18 @@ services:
     networks:
       - docker_network
     ports:
-      - 5000:5000
-  postgres:
-    container_name: postgres
+      - 8888:8888
+      - 3500:3500
+    links:
+      - wsspostgres:app_db
+  wsspostgres:
+    container_name: wsspostgres
     build:
       context: ./cmd/db
     volumes:
       - <<: *services-volume
-        source: ${HOST}/postgres
-        target: /var/lib/postgres
+        source: ${HOST}/wsspostgres
+        target: /var/lib/wsspostgres
     expose:
       - 5432
     hostname: postgres
