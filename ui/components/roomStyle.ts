@@ -9,7 +9,7 @@ export const TitleStyle = {
 };
 
 export const ListStyle = {
-  width: '320px',
+  width: "320px",
   color: "white",
   background: "#505050",
   padding: "10px 10px",
@@ -17,33 +17,34 @@ export const ListStyle = {
   borderRadius: "6px",
   fontSize: "20px",
   lineHeight: 1.5,
-  margin: '36px',
+  margin: "36px",
 };
 
 export const RoomFrame = {
-   width: "100%",
-   height: "100%",
-   border: "solid white",
+  width: "100%",
+  height: "100%",
+  border: "solid white",
 };
 
 export const InnerRoomFrame = {
-   display: "flex",
-   justifyContent: "center"
-}
+  display: "flex",
+  justifyContent: "center",
+};
 
 export const RoomListFrame = {
-   border: "solid silver",
-   width: "400px",
-   height: "600px",
-   margin: "10px"
-}
+  border: "solid silver",
+  width: "400px",
+  height: "600px",
+  margin: "10px",
+};
 
 export const CurRoomStyleFrame = {
-  border: "solid silver", 
-  width: "400px", 
+  border: "solid silver",
+  width: "400px",
   height: "600px",
-  margin: "10px"
-}
+  margin: "10px",
+};
+
 export const CurRoomStyle = {
   color: "white",
   width: "395px",
@@ -58,8 +59,6 @@ export const CurRoomStyle = {
 export const ParStyle = {
   border: "solid silver",
   width: "395px",
-  height: "55px", 
+  height: "55px",
   padding: "10px 10px",
 };
-
-

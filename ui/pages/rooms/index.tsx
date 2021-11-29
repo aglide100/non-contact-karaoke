@@ -2,13 +2,47 @@ import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
 
-import { CurRoomStyle, TitleStyle, ParStyle, RoomFrame, InnerRoomFrame, RoomListFrame, CurRoomStyleFrame } from "../../components/roomStyle";
+import {
+  CurRoomStyle,
+  TitleStyle,
+  ParStyle,
+  RoomFrame,
+  InnerRoomFrame,
+  RoomListFrame,
+  CurRoomStyleFrame,
+} from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
 
+type roomProps = {
+  roomId: string;
+  roomTitle: string;
+};
+
+type userProps = {
+  name: string;
+  userId: string;
+};
+
+const dumpUserList: userProps[] = [
+  {
+    name: "홍길동1",
+    userId: "1",
+  },
+  {
+    name: "홍길동2",
+    userId: "2",
+  },
+  {
+    name: "홍길동3",
+    userId: "3",
+  },
+];
+
 const Rooms: React.FC = ({}) => {
   let roomList: ReactElement[];
-  const [userList, setUserList] = useState("");
+  const [onClickRoomData, setOnClickRoomData] = useState<roomProps>();
+  const [userInRoom, setUserInRoom] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [roomListData, setRoomListData] = useState([]);
 
@@ -18,30 +52,24 @@ const Rooms: React.FC = ({}) => {
 
   useEffect(() => {
     if (!isLoaded) {
-      getWsManager().then(function (clientTemp) {
-        
+      getWsManager()
+        .then(function (clientTemp) {
+          return (client = clientTemp);
+        })
+        .finally(() => {
+          if (client != undefined) {
+            let list;
+            client.on("res-get-rooms", () => {
+              list = client.getRoomIdList();
+              console.log("list!" + list);
+              setRoomListData(list);
 
-        return (client = clientTemp);
-        
+              setIsLoaded(true);
+            });
 
-      }).finally(() => {
-        if (client != undefined) {
-          let list;
-          client.on("res-get-rooms", () => {
-            list = client.getRoomIdList();
-            console.log("list!" + list);
-            setRoomListData(list);
-  
-            setIsLoaded(true);
-          });
-  
-          // client.emit("res-get-rooms");
-          client.getRooms();
-  
-          // console.log("list : ", list);
-        }
- 
-      })
+            client.getRooms();
+          }
+        });
     }
     return () => setIsLoaded(true);
   }, []);
@@ -53,32 +81,67 @@ const Rooms: React.FC = ({}) => {
           key={index}
           roomId={room.roomId}
           roomTitle={room.roomTitle}
-          onHandleClick={(room) => {
-            onHandleClick(room);
+          onHandleClick={(e) => {
+            onHandleClick(room.roomId, room.roomTitle);
+          }}
+          onClickDelte={(e) => {
+            onDeleteClick(room.roomId);
           }}
         ></RoomItem>
       );
     });
   }
 
-  function onHandleClick(roomId) {
-    // 서버가 없어서 임시 룸아이디를 넣음
-    setUserList(roomId);
+  function onDeleteClick(roomId) {
+    alert("delte wip");
+    getWsManager().then((client) => {
+      // call delete room event
+    });
+  }
+
+  function onHandleClick(roomId, roomTitle) {
+    let data: roomProps = {
+      roomId: roomId,
+      roomTitle: roomTitle,
+    };
+
+    getWsManager().then((client) => {
+      // call get user list in room
+    });
+    setOnClickRoomData(data);
   }
 
   return (
-    <div style ={RoomFrame}>
-      {/* { <h1 style={TitleStyle}>title</h1> } */}
-      <div style= {InnerRoomFrame}>
-        <div style={RoomListFrame}>
-          <ul>{roomList}</ul>
-        </div>
-        <div style = {CurRoomStyleFrame}>
-          <div style={CurRoomStyle}>@번 방의 현재 상황</div>
-          <div style = {ParStyle}>참여자 - @명 이용중</div>
-          {userList == undefined ? <>인원이 없습니다!</> : <>{userList}</>}
-        </div>
+    <div style={RoomFrame} className="w-full flex flex-row justify center">
+      <div style={RoomListFrame}>
+        <ul>{roomList}</ul>
       </div>
+      {onClickRoomData == undefined ? (
+        <></>
+      ) : (
+        <>
+          <div style={InnerRoomFrame}>
+            <div style={CurRoomStyleFrame}>
+              <div style={CurRoomStyle}>{onClickRoomData.roomTitle}방</div>
+              <ul>
+                {dumpUserList.map((user) => {
+                  return (
+                    <li
+                      key={user.userId}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        alert("User Id:" + user.userId);
+                      }}
+                    >
+                      <div style={ParStyle}>{user.name}</div>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

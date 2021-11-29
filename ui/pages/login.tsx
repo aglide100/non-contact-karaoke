@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
+import { WsManager } from "../utils/ws_manager";
+
+let client: WsManager;
 
 function Loginpage() {
   const [userID, setUserID] = useState("");
@@ -64,9 +67,15 @@ function Loginpage() {
     return true;
   };
 
+  async function getWsManager() {
+    var clientTemp = await WsManager.getInstance();
+    return clientTemp;
+  }
+
   const onSubmitHandler = (event) => {
     event.preventDefault();
     let body = { id: userID, password: userPassword };
+    getWsManager().then((clientTemp) => {});
   };
 
   return (
