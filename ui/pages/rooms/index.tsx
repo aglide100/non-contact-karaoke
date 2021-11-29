@@ -1,7 +1,7 @@
 import React, { ReactElement, useEffect, useState } from "react";
 import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
-import { CurRoomStyle, TitleStyle, ParStyle, OverCurRoon } from "../../components/roomStyle";
+import { CurRoomStyle, TitleStyle, ParStyle, OverCurRoom } from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
 
@@ -66,7 +66,7 @@ const Rooms: React.FC = ({}) => {
   }
 
   return (
-    <div style ={OverCurRoon}>
+    <div style ={OverCurRoom}>
       {/* { <h1 style={TitleStyle}>title</h1> } */}
 
       <div className="flex-direction: column">

@@ -20,7 +20,7 @@ export const ListStyle = {
   margin: '10px'
 };
 
-export const OverCurRoon = {
+export const OverCurRoom = {
    border: "solid silver",
    width:"305px",
    height: "500px"
