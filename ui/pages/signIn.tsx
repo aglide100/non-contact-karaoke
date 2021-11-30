@@ -2,10 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
-import * as ws_manager from "../utils/ws_manager";
 import { setCookie } from "../utils/cookie";
-
-let client: ws_manager.WsManager;
+import { WsManager } from "../utils/ws_manager";
+let client: WsManager;
 
 function SignInpage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -57,14 +56,14 @@ function SignInpage() {
     return { isInvalid: false };
   };
 
-  async function connSocket() {
-    var clientTemp = await ws_manager.WsManager.getInstance();
+  async function getWsManager() {
+    var clientTemp = await WsManager.getInstance();
     return clientTemp;
   }
 
   useEffect(() => {
     if (!isLoaded) {
-      connSocket()
+      getWsManager()
         .then(function (clientTemp) {
           setIsLoaded(true);
           clientTemp.on("res-login-user", () => {
