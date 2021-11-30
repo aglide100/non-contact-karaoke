@@ -1,5 +1,5 @@
-import { BaseDao } from "../../DAO/baseDao";
-import { MemberProps } from "../../../../ui/common/MemberProps";
+import { BaseDao } from "./baseDao";
+import { MemberProps } from "../../../ui/common/MemberProps";
 
 const pgp = require("pg-promise");
 
@@ -46,19 +46,18 @@ export class MemberDao extends BaseDao {
     });
   }
 
-  public selectMember(member: MemberProps, callback: Function) {
+  public async selectMember(member: MemberProps, callback: Function) {
     const q = `SELECT * FROM "Member" where member_no=$1 and password=$2`;
     const client = this.getClient();
 
     console.log(pgp.as.format(q, [member.member_no, member.password]));
     client.query(q, [member.member_no, member.password], (err, result) => {
       client.end();
-      console.log();
 
       if (err) {
         console.log("Can't exec query!" + err);
         callback(null, err);
-        return;
+        // return;
       }
 
       if (result.rowCount != 0) {

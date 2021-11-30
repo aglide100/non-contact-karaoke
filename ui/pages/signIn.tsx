@@ -1,12 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
+import { setCookie } from "../utils/cookie";
 import { WsManager } from "../utils/ws_manager";
-
 let client: WsManager;
 
-function Loginpage() {
+function SignInpage() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [userID, setUserID] = useState("");
   const [userIDErrorMsg, setUserIDErrorMsg] = useState("");
   const [userIDInvalid, setUserIDInvalid] =
@@ -55,6 +56,34 @@ function Loginpage() {
     return { isInvalid: false };
   };
 
+  async function getWsManager() {
+    var clientTemp = await WsManager.getInstance();
+    return clientTemp;
+  }
+
+  useEffect(() => {
+    if (!isLoaded) {
+      getWsManager()
+        .then(function (clientTemp) {
+          setIsLoaded(true);
+          clientTemp.on("res-login-user", () => {
+            setCookie("userId", clientTemp.getUserID());
+            setCookie("userName", clientTemp.getUserName());
+            setCookie("userToken", clientTemp.getUserToken());
+            alert("로그인 되었습니다!");
+            document.location.href = "/";
+          });
+          clientTemp.on("res-login-error", () => {
+            alert("It looks like error?");
+          });
+          return (client = clientTemp);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  });
+
   const isItValidForm = (): Boolean => {
     if (userPasswordInvalid) {
       return false;
@@ -67,15 +96,10 @@ function Loginpage() {
     return true;
   };
 
-  async function getWsManager() {
-    var clientTemp = await WsManager.getInstance();
-    return clientTemp;
-  }
-
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    let body = { id: userID, password: userPassword };
-    getWsManager().then((clientTemp) => {});
+
+    client.login(userID, userPassword);
   };
 
   return (
@@ -100,6 +124,7 @@ function Loginpage() {
               }}
             ></InputField>
           </div>
+
           <div className="mt-3">
             <InputField
               type="password"
@@ -136,7 +161,7 @@ function Loginpage() {
           color="white"
           onClick={(e) => {
             e.preventDefault();
-            router.push("/signup");
+            router.push("/signUp");
           }}
         >
           SignUp
@@ -146,4 +171,4 @@ function Loginpage() {
   );
 }
 
-export default Loginpage;
+export default SignInpage;

@@ -30,7 +30,7 @@ const Test: React.FC<{}> = ({}) => {
         .then(function (clientTemp) {
           setTimeout(function () {
             setIsLoaded(true);
-            setUserID(clientTemp.getClientID());
+            setUserID(clientTemp.getUserID());
           }, 1000);
 
           return (client = clientTemp);
