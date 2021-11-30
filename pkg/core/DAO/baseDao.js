@@ -21,7 +21,7 @@ let DBHost = process.env.DB_HOST;
 let DBPort = process.env.DB_PORT;
 let config = {
     user: "table_admin",
-    host: "localhost",
+    host: "app_db",
     database: "webapp",
     password: "HeLLo!1",
     port: 5432,

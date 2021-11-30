@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemberDao = void 0;
-const baseDao_1 = require("../../DAO/baseDao");
+const baseDao_1 = require("./baseDao");
 const pgp = require("pg-promise");
 class MemberDao extends baseDao_1.BaseDao {
     constructor() {
@@ -45,23 +45,25 @@ class MemberDao extends baseDao_1.BaseDao {
         }));
     }
     selectMember(member, callback) {
-        const q = `SELECT * FROM "Member" where member_no=$1 and password=$2`;
-        const client = this.getClient();
-        console.log(pgp.as.format(q, [member.member_no, member.password]));
-        client.query(q, [member.member_no, member.password], (err, result) => {
-            client.end();
-            console.log();
-            if (err) {
-                console.log("Can't exec query!" + err);
-                callback(null, err);
-                return;
-            }
-            if (result.rowCount != 0) {
-                callback(result.rows[0], null);
-            }
-            else {
-                callback(null, null);
-            }
+        return __awaiter(this, void 0, void 0, function* () {
+            const q = `SELECT * FROM "Member" where member_no=$1 and password=$2`;
+            const client = this.getClient();
+            console.log(pgp.as.format(q, [member.member_no, member.password]));
+            client.query(q, [member.member_no, member.password], (err, result) => {
+                client.end();
+                console.log();
+                if (err) {
+                    console.log("Can't exec query!" + err);
+                    callback(null, err);
+                    return;
+                }
+                if (result.rowCount != 0) {
+                    callback(result.rows[0], null);
+                }
+                else {
+                    callback(null, null);
+                }
+            });
         });
     }
     selectMemberByNo(no, callback) {

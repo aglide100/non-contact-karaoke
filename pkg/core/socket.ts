@@ -6,9 +6,6 @@ import * as uuid from "uuid";
 import * as commonType from "../../ui/common/socket-message";
 import * as room from "./model/socket/room";
 import { WebSocketHandler } from "./handler/webSocketHandler";
-
-var session = require("express-session");
-
 type user = {
   userId: string;
   socket: WebSocket;
@@ -56,17 +53,17 @@ export class Server {
     // req 쿠키나 세션 체크
 
     // const newUUID = uuid.v4();
-    // let data: commonType.socketMessage = {
-    //   type: "conn",
-    //   to: "",
-    //   from: "server",
-    //   // 임시로 uuid발급!
-    //   content: newUUID,
-    // };
-    // let json = JSON.stringify(data);
-    // this.users.push(newUser);
-    // ws.send(json);
     // const newUser: user = { userId: newUUID, socket: ws };
+    let data: commonType.socketMessage = {
+      type: "conn",
+      to: "",
+      from: "server",
+      // 임시로 uuid발급!
+      content: "Hello",
+    };
+    let json = JSON.stringify(data);
+    // this.users.push(newUser);
+    ws.send(json);
     console.log("current users", this.users.length);
     console.log("current rooms", room.Room.getInstance().getRooms().length);
 

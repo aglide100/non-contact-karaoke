@@ -22,11 +22,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WebSocketHandler = void 0;
 const room = __importStar(require("../model/socket/room"));
 const uuid = __importStar(require("uuid"));
+const memberController_1 = require("../controller/memberController");
 // import * as user from "../model/socket/user";
 class WebSocketHandler {
     onClose(ws, ev) { }
     onMessage(ws, ev) {
         const common = JSON.parse(ev.data);
+        const memberCtrl = new memberController_1.MemberController();
         console.log(common);
         if (common) {
             if (common.type === "req-create-room") {
@@ -46,6 +48,37 @@ class WebSocketHandler {
                     content: newUUID,
                 };
                 ws.send(JSON.stringify(data));
+            }
+            if (common.type === "req-login-user") {
+                let data = JSON.parse(common.content);
+                let result;
+                memberCtrl
+                    .login(data.userId, data.userPassword, (res) => {
+                    console.log("res???", res);
+                    result = res;
+                })
+                    .finally(() => {
+                    console.log("login result!" + result);
+                    let sendData;
+                    if (result.error != undefined) {
+                        sendData = {
+                            type: "res-login-error",
+                            to: common.from,
+                            from: "server",
+                            content: result.toString(),
+                        };
+                    }
+                    else {
+                        sendData = {
+                            type: "res-login-user",
+                            to: common.from,
+                            from: "server",
+                            content: result.toString(),
+                        };
+                    }
+                    console.log("Sending... data" + JSON.stringify(data));
+                    ws.send(JSON.stringify(data));
+                });
             }
             if (common.type === "req-join-room") {
                 // if (

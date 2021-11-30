@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
+import * as ws_manager from "../utils/ws_manager";
 
-function Loginpage() {
+let client: ws_manager.WsManager;
+
+function SignInpage() {
+  const [isLoaded, setIsLoaded] = useState(false);
   const [userID, setUserID] = useState("");
   const [userIDErrorMsg, setUserIDErrorMsg] = useState("");
   const [userIDInvalid, setUserIDInvalid] =
@@ -52,6 +56,34 @@ function Loginpage() {
     return { isInvalid: false };
   };
 
+  async function connSocket() {
+    var clientTemp = await ws_manager.WsManager.getInstance();
+    return clientTemp;
+  }
+
+  useEffect(() => {
+    // let newPC = new RTCPeerConnection(rtc_pc.pc_config);
+    if (!isLoaded) {
+      connSocket()
+        .then(function (clientTemp) {
+          // setTimeout(function () {
+          //   setIsLoaded(true);
+          //   // setUserID(clientTemp.getClientID());
+          // }, 1000);
+          clientTemp.on("res-login-user", () => {
+            alert("success?");
+          });
+          clientTemp.on("res-login-error", () => {
+            alert("It looks like error?");
+          });
+          return (client = clientTemp);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  });
+
   const isItValidForm = (): Boolean => {
     if (userPasswordInvalid) {
       return false;
@@ -66,7 +98,8 @@ function Loginpage() {
 
   const onSubmitHandler = (event) => {
     event.preventDefault();
-    let body = { id: userID, password: userPassword };
+
+    client.login(userID, userPassword);
   };
 
   return (
@@ -137,4 +170,4 @@ function Loginpage() {
   );
 }
 
-export default Loginpage;
+export default SignInpage;

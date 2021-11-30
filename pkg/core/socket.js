@@ -26,10 +26,8 @@ exports.Server = void 0;
 const ws = __importStar(require("ws"));
 const http = __importStar(require("http"));
 const express_1 = __importDefault(require("express"));
-const uuid = __importStar(require("uuid"));
 const room = __importStar(require("./model/socket/room"));
 const webSocketHandler_1 = require("./handler/webSocketHandler");
-var session = require("express-session");
 class Server {
     constructor() {
         this.DEFAULT_PORT = 8888;
@@ -38,10 +36,6 @@ class Server {
         this.users = new Array();
         const cors = require("cors");
         this.app.use(cors());
-        // const MemberCtrl = new MemberController();
-        // this.app.get("/api/member", MemberCtrl.list());
-        // this.app.post("/api/member/join", MemberCtrl.join());
-        // this.app.post("/api/member/login", MemberCtrl.login);
         console.log("user: ", this.users);
         this.server = http.createServer(this.app);
         this.socket = new ws.Server({
@@ -58,20 +52,20 @@ class Server {
     onConnection(ws, req) {
         // console.log(ws);
         // req 쿠키나 세션 체크
-        const newUUID = uuid.v4();
+        // const newUUID = uuid.v4();
+        // const newUser: user = { userId: newUUID, socket: ws };
         let data = {
             type: "conn",
             to: "",
             from: "server",
             // 임시로 uuid발급!
-            content: newUUID,
+            content: "Hello",
         };
         let json = JSON.stringify(data);
-        const newUser = { userId: newUUID, socket: ws };
+        // this.users.push(newUser);
+        ws.send(json);
         console.log("current users", this.users.length);
         console.log("current rooms", room.Room.getInstance().getRooms().length);
-        this.users.push(newUser);
-        ws.send(json);
         ws.onmessage = (ev) => {
             this.websocketHandler.onMessage(ws, ev);
         };

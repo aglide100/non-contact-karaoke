@@ -21,6 +21,8 @@ export class WsManager extends EventEmitter {
   private static instance: WsManager;
   private client: WebSocket;
   private static userID: string;
+  private static userName: string;
+  private static userToken: string;
   private static roomID: string;
   private static roomIdList: string[];
   private isInit: boolean;
@@ -140,6 +142,19 @@ export class WsManager extends EventEmitter {
   public createNewRoom(roomTitle: string) {
     if (this.client.readyState === 1) {
       this.sendMsg(roomTitle, "req-create-room", "server");
+    } else {
+      console.log(this.client.readyState);
+    }
+  }
+
+  public login(userId: string, userPassword: string) {
+    if (this.client.readyState === 1) {
+      let data = {
+        userId: userId,
+        userPassword: userPassword,
+      };
+
+      this.sendMsg(JSON.stringify(data), "req-login-user", "server");
     } else {
       console.log(this.client.readyState);
     }

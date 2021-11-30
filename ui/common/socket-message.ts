@@ -10,6 +10,7 @@ export type socketMsgType =
   | "announce"
   | "req-chat-in-room"
   | "res-chat-in-room"
+  | "res-login-error"
   | "res-get-rooms"
   | "res-create-room"
   | "res-join-room"

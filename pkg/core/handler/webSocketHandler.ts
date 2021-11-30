@@ -1,6 +1,10 @@
 import * as commonType from "../../../ui/common/socket-message";
 import * as room from "../model/socket/room";
 import * as uuid from "uuid";
+import {
+  MemberController,
+  loginResultProps,
+} from "../controller/memberController";
 // import * as user from "../model/socket/user";
 
 export class WebSocketHandler {
@@ -8,6 +12,7 @@ export class WebSocketHandler {
 
   public onMessage(ws: WebSocket, ev: MessageEvent): void {
     const common: commonType.socketMessage = JSON.parse(ev.data);
+    const memberCtrl = new MemberController();
 
     console.log(common);
     if (common) {
@@ -30,6 +35,40 @@ export class WebSocketHandler {
         };
 
         ws.send(JSON.stringify(data));
+      }
+
+      if (common.type === "req-login-user") {
+        let data = JSON.parse(common.content);
+        let result: loginResultProps;
+
+        memberCtrl
+          .login(data.userId, data.userPassword, (res: loginResultProps) => {
+            console.log("res???", res);
+            result = res;
+          })
+          .finally(() => {
+            console.log("login result!" + result);
+
+            let sendData: commonType.socketMessage;
+            if (result.error != undefined) {
+              sendData = {
+                type: "res-login-error",
+                to: common.from,
+                from: "server",
+                content: result.toString(),
+              };
+            } else {
+              sendData = {
+                type: "res-login-user",
+                to: common.from,
+                from: "server",
+                content: result.toString(),
+              };
+            }
+
+            console.log("Sending... data" + JSON.stringify(data));
+            ws.send(JSON.stringify(data));
+          });
       }
 
       if (common.type === "req-join-room") {
