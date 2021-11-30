@@ -66,14 +66,25 @@ export class WsManager extends EventEmitter {
       }
 
       if (common.type === "res-login-user") {
+        let data = JSON.parse(common.content);
+        WsManager.userID = data.userId;
+        WsManager.userName = data.userName;
+        WsManager.userToken = data.userToken;
         WsManager.instance.emit("res-login-user");
+      }
+
+      if (common.type === "res-join-user") {
+        let data = JSON.parse(common.content);
+        WsManager.userID = data.userId;
+        WsManager.userName = data.userName;
+        WsManager.userToken = data.userToken;
+        WsManager.instance.emit("res-join-user");
       }
 
       if (common.type === "res-get-rooms") {
         WsManager.roomIdList = JSON.parse(common.content);
 
         WsManager.instance.emit("res-get-rooms");
-        // console.log("res-get-rooms" + common.content);
       }
 
       if (common.type === "res-join-room") {
@@ -86,7 +97,6 @@ export class WsManager extends EventEmitter {
         alert("successfully create room!" + common.content);
 
         WsManager.getInstance().joinRoom(common.content);
-        // WsManager.roomID = common.content;
       }
     }
 
@@ -128,14 +138,33 @@ export class WsManager extends EventEmitter {
     }
   }
 
-  public getClientID() {
+  public getUserName() {
+    if (this.client.readyState === 1) {
+      return WsManager.userName;
+    } else {
+      console.log(this.client.readyState);
+    }
+
+    return null;
+  }
+
+  public getUserToken() {
+    if (this.client.readyState === 1) {
+      return WsManager.userToken;
+    } else {
+      console.log(this.client.readyState);
+    }
+
+    return null;
+  }
+
+  public getUserID() {
     if (this.client.readyState === 1) {
       return WsManager.userID;
     } else {
       console.log(this.client.readyState);
     }
 
-    console.log(this.client.readyState);
     return null;
   }
 
@@ -155,6 +184,20 @@ export class WsManager extends EventEmitter {
       };
 
       this.sendMsg(JSON.stringify(data), "req-login-user", "server");
+    } else {
+      console.log(this.client.readyState);
+    }
+  }
+
+  public join(userId: string, userPassword: string, userName: string) {
+    if (this.client.readyState === 1) {
+      let data = {
+        userId: userId,
+        userPassword: userPassword,
+        userName: userName,
+      };
+
+      this.sendMsg(JSON.stringify(data), "req-join-user", "server");
     } else {
       console.log(this.client.readyState);
     }

@@ -19,6 +19,7 @@ export default function Layout({
 
   useEffect(() => {
     const userId = getCookie("userId");
+    const userName = getCookie("userName");
     const userToken = getCookie("userToken");
     console.log("token" + userId);
     if (
@@ -41,9 +42,10 @@ export default function Layout({
     } else {
       setLoginMenu(
         <>
-          {userId} |{" "}
+          {userName} |{" "}
           <span
             onClick={() => {
+              removeCookie("userName");
               removeCookie("userId");
               removeCookie("userToken");
 
@@ -55,7 +57,7 @@ export default function Layout({
           |{" "}
           <Link href="/rooms">
             <a>rooms</a>
-          </Link>
+          </Link>{" "}
           |{" "}
           <Link href="/create">
             <a>방생성</a>

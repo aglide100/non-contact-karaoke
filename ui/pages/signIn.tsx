@@ -3,6 +3,7 @@ import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
 import * as ws_manager from "../utils/ws_manager";
+import { setCookie } from "../utils/cookie";
 
 let client: ws_manager.WsManager;
 
@@ -62,16 +63,16 @@ function SignInpage() {
   }
 
   useEffect(() => {
-    // let newPC = new RTCPeerConnection(rtc_pc.pc_config);
     if (!isLoaded) {
       connSocket()
         .then(function (clientTemp) {
-          // setTimeout(function () {
-          //   setIsLoaded(true);
-          //   // setUserID(clientTemp.getClientID());
-          // }, 1000);
+          setIsLoaded(true);
           clientTemp.on("res-login-user", () => {
-            alert("success?");
+            setCookie("userId", clientTemp.getUserID());
+            setCookie("userName", clientTemp.getUserName());
+            setCookie("userToken", clientTemp.getUserToken());
+            alert("로그인 되었습니다!");
+            document.location.href = "/";
           });
           clientTemp.on("res-login-error", () => {
             alert("It looks like error?");
@@ -124,6 +125,7 @@ function SignInpage() {
               }}
             ></InputField>
           </div>
+
           <div className="mt-3">
             <InputField
               type="password"
@@ -160,7 +162,7 @@ function SignInpage() {
           color="white"
           onClick={(e) => {
             e.preventDefault();
-            router.push("/signup");
+            router.push("/signUp");
           }}
         >
           SignUp

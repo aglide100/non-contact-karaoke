@@ -5,7 +5,6 @@ import {
   MemberController,
   loginResultProps,
 } from "../controller/memberController";
-// import * as user from "../model/socket/user";
 
 export class WebSocketHandler {
   public onClose(ws: WebSocket, ev: CloseEvent): void {}
@@ -16,8 +15,39 @@ export class WebSocketHandler {
 
     console.log(common);
     if (common) {
+      if (common.type === "req-join-user") {
+        console.log("req-join-user");
+        const tempUser = JSON.parse(common.content);
+
+        memberCtrl.join(
+          tempUser.userId,
+          tempUser.userName,
+          tempUser.userPassword,
+          (res: any, err: Error) => {
+            let sendData: commonType.socketMessage;
+            if (err != undefined || err != null) {
+              sendData = {
+                type: "res-join-error",
+                to: common.from,
+                from: "server",
+                content: err.toString(),
+              };
+            } else {
+              sendData = {
+                type: "res-join-user",
+                to: common.from,
+                from: "server",
+                content: JSON.stringify(res),
+              };
+            }
+
+            ws.send(JSON.stringify(sendData));
+          }
+        );
+      }
+
       if (common.type === "req-create-room") {
-        console.log("someone call create room");
+        console.log("req-create-room");
         const newUUID = uuid.v4();
         const newRoom: room.roomProps = {
           roomID: newUUID,
@@ -38,37 +68,38 @@ export class WebSocketHandler {
       }
 
       if (common.type === "req-login-user") {
+        console.log("req-login-user");
         let data = JSON.parse(common.content);
         let result: loginResultProps;
 
-        memberCtrl
-          .login(data.userId, data.userPassword, (res: loginResultProps) => {
-            console.log("res???", res);
-            result = res;
-          })
-          .finally(() => {
-            console.log("login result!" + result);
+        memberCtrl.login(
+          data.userId,
+          data.userPassword,
+          (res: loginResultProps, err: Error) => {
+            // member_no: '1234', password: '1234', name: '1234'
+            let getUser: loginResultProps = res;
 
             let sendData: commonType.socketMessage;
-            if (result.error != undefined) {
+            if (err != undefined || err != null) {
               sendData = {
                 type: "res-login-error",
                 to: common.from,
                 from: "server",
-                content: result.toString(),
+                content: err.toString(),
               };
             } else {
               sendData = {
                 type: "res-login-user",
                 to: common.from,
                 from: "server",
-                content: result.toString(),
+                content: JSON.stringify(getUser),
               };
             }
 
-            console.log("Sending... data" + JSON.stringify(data));
-            ws.send(JSON.stringify(data));
-          });
+            // console.log("Sending... data" + JSON.stringify(sendData));
+            ws.send(JSON.stringify(sendData));
+          }
+        );
       }
 
       if (common.type === "req-join-room") {

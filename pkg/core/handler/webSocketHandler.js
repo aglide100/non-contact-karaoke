@@ -23,7 +23,6 @@ exports.WebSocketHandler = void 0;
 const room = __importStar(require("../model/socket/room"));
 const uuid = __importStar(require("uuid"));
 const memberController_1 = require("../controller/memberController");
-// import * as user from "../model/socket/user";
 class WebSocketHandler {
     onClose(ws, ev) { }
     onMessage(ws, ev) {
@@ -31,8 +30,32 @@ class WebSocketHandler {
         const memberCtrl = new memberController_1.MemberController();
         console.log(common);
         if (common) {
+            if (common.type === "req-join-user") {
+                console.log("req-join-user");
+                const tempUser = JSON.parse(common.content);
+                memberCtrl.join(tempUser.userId, tempUser.userName, tempUser.userPassword, (res, err) => {
+                    let sendData;
+                    if (err != undefined || err != null) {
+                        sendData = {
+                            type: "res-join-error",
+                            to: common.from,
+                            from: "server",
+                            content: err.toString(),
+                        };
+                    }
+                    else {
+                        sendData = {
+                            type: "res-join-user",
+                            to: common.from,
+                            from: "server",
+                            content: JSON.stringify(res),
+                        };
+                    }
+                    ws.send(JSON.stringify(sendData));
+                });
+            }
             if (common.type === "req-create-room") {
-                console.log("someone call create room");
+                console.log("req-create-room");
                 const newUUID = uuid.v4();
                 const newRoom = {
                     roomID: newUUID,
@@ -50,22 +73,19 @@ class WebSocketHandler {
                 ws.send(JSON.stringify(data));
             }
             if (common.type === "req-login-user") {
+                console.log("req-login-user");
                 let data = JSON.parse(common.content);
                 let result;
-                memberCtrl
-                    .login(data.userId, data.userPassword, (res) => {
-                    console.log("res???", res);
-                    result = res;
-                })
-                    .finally(() => {
-                    console.log("login result!" + result);
+                memberCtrl.login(data.userId, data.userPassword, (res, err) => {
+                    // member_no: '1234', password: '1234', name: '1234'
+                    let getUser = res;
                     let sendData;
-                    if (result.error != undefined) {
+                    if (err != undefined || err != null) {
                         sendData = {
                             type: "res-login-error",
                             to: common.from,
                             from: "server",
-                            content: result.toString(),
+                            content: err.toString(),
                         };
                     }
                     else {
@@ -73,11 +93,11 @@ class WebSocketHandler {
                             type: "res-login-user",
                             to: common.from,
                             from: "server",
-                            content: result.toString(),
+                            content: JSON.stringify(getUser),
                         };
                     }
-                    console.log("Sending... data" + JSON.stringify(data));
-                    ws.send(JSON.stringify(data));
+                    // console.log("Sending... data" + JSON.stringify(sendData));
+                    ws.send(JSON.stringify(sendData));
                 });
             }
             if (common.type === "req-join-room") {

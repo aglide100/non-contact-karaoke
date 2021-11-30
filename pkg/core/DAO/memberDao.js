@@ -51,11 +51,10 @@ class MemberDao extends baseDao_1.BaseDao {
             console.log(pgp.as.format(q, [member.member_no, member.password]));
             client.query(q, [member.member_no, member.password], (err, result) => {
                 client.end();
-                console.log();
                 if (err) {
                     console.log("Can't exec query!" + err);
                     callback(null, err);
-                    return;
+                    // return;
                 }
                 if (result.rowCount != 0) {
                     callback(result.rows[0], null);

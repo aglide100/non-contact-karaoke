@@ -47,59 +47,46 @@ class MemberController extends baseController_1.BaseController {
     login(userId, userPassword, callback) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log("request member " + userId + " login");
-            let daoResult;
             const newUser = {
                 member_no: userId,
                 name: "",
                 password: userPassword,
             };
-            memberDao_1.MemberDao.getInstance()
-                .selectMember(newUser, (result, error) => {
-                if (error != null || result == null) {
-                    console.log("Can't Login new member" + error + result);
-                    daoResult = {
-                        userId: userId,
-                        userToken: "",
-                        error: error,
-                    };
-                    return daoResult;
-                }
-                else {
-                    const json = this.generateTokenJson(result);
-                    daoResult = {
-                        userId: userId,
-                        userToken: JSON.stringify(json),
-                        error: undefined,
-                    };
-                }
-            })
-                .then(() => {
-                console.log("Call callback function in login");
-                callback(daoResult);
+            memberDao_1.MemberDao.getInstance().selectMember(newUser, (result, error) => {
+                const json = this.generateTokenJson(newUser);
+                let data = {
+                    userId: userId,
+                    userName: result.name,
+                    userToken: json,
+                };
+                callback(data, error);
             });
-            // return daoResult;
         });
     }
-    join() {
-        return (req, res) => {
-            console.log("request member " + req.body.name + " join");
-            const id = uuid.v4();
-            const newUser = {
-                member_no: req.body.member_no,
-                name: req.body.name,
-                password: req.body.password,
-            };
-            memberDao_1.MemberDao.getInstance().insertMember(newUser, (result, error) => {
-                if (error != null || result == null) {
-                    console.log("Can't Insert new member" + error + result);
-                    res.status(400).send("error :" + error.message);
-                }
-                else {
-                    const json = this.generateTokenJson(result);
-                    res.status(200).send(JSON.stringify(json));
-                }
-            });
+    join(userId, userPassword, userName, callback) {
+        console.log("request member " + userId + " join");
+        const id = uuid.v4();
+        const newUser = {
+            member_no: userId,
+            name: userName,
+            password: userPassword,
         };
+        memberDao_1.MemberDao.getInstance().insertMember(newUser, (result, error) => {
+            if (error != null || result == null) {
+                console.log("Can't Insert new member" + error + result);
+                callback(null, error);
+            }
+            else {
+                console.log("!!!!!!!!!!!!!!!", newUser);
+                const json = this.generateTokenJson(newUser);
+                let data = {
+                    userId: userId,
+                    userName: userName,
+                    userToken: json,
+                };
+                callback(data, null);
+            }
+        });
     }
 }
 exports.MemberController = MemberController;
