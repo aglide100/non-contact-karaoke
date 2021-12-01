@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import * as ws_manager from "../../utils/ws_manager";
+import * as rtc_manager from "../../utils/rtc_manager";
 // type RoomProps ={
 //     params: string
 // }
@@ -20,6 +21,11 @@ const Room: React.FC = ({}) => {
     return clientTemp;
   }
 
+  async function getRtcManager() {
+    var clientTemp = await rtc_manager.RtcManager.getInstance();
+    return clientTemp;
+  }
+
   useEffect(() => {
     if (!isLoaded && router.isReady) {
       let roomID = JSON.stringify(router.query.id);
@@ -32,6 +38,8 @@ const Room: React.FC = ({}) => {
 
         return (client = clientTemp);
       });
+
+      getRtcManager();
     }
   }, [router.isReady]);
 

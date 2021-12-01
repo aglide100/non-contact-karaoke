@@ -27,6 +27,8 @@ export type socketMsgType =
   | "req-delete-room"
   | "req-join-room"
   | "left-room"
+  | "req-user-in-room"
+  | "res-user-in-room"
   // 기타
   | "conn"
   | "answer"

@@ -2,6 +2,7 @@ import * as ws_config from "./ws_config";
 import * as commonType from "../common/socket-message";
 import router, { NextRouter, Router } from "next/router";
 import { EventEmitter } from "events";
+import { useRef } from "react";
 /*
   websocket readyState field
 
@@ -103,6 +104,10 @@ export class WsManager extends EventEmitter {
     if (userIDtemp != null || userIDtemp != undefined) {
       WsManager.userID = userIDtemp;
     }
+  }
+
+  public getSocket() {
+    return this.client;
   }
 
   private onError(ev: Event) {
