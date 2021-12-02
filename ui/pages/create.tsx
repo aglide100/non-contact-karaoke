@@ -1,7 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
-import Link from "next/link";
-import Layout from "../components/Layout";
-import dynamic from "next/dynamic";
+import React, { useState, useEffect } from "react";
 
 import { WsManager } from "../utils/ws_manager";
 let client: WsManager;
@@ -15,8 +12,8 @@ const CreatePage: React.FC<{}> = ({}) => {
   }
 
   useEffect(() => {
-    // let newPC = new RTCPeerConnection(rtc_pc.pc_config);
     if (!isLoaded) {
+      setIsLoaded(true);
       getWsManager()
         .then(function (clientTemp) {
           return (client = clientTemp);

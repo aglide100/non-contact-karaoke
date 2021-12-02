@@ -23,3 +23,5 @@ const ViedoPlayer = (props: viedioPlayerProps) => {
     </div>
   );
 };
+
+export default ViedoPlayer;

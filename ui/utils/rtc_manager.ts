@@ -9,6 +9,7 @@ const pc_config = {
 export type UserProps = {
   id: string;
   name: string;
+  stream: MediaStream;
 };
 
 export class RtcManager {
@@ -183,7 +184,11 @@ export class RtcManager {
       pc.ontrack = (e) => {
         console.log("ontack success");
 
-        RtcManager.users = RtcManager.users.concat({ id: socketId, name });
+        RtcManager.users = RtcManager.users.concat({
+          id: socketId,
+          name,
+          stream: e.streams[0],
+        });
       };
 
       if (RtcManager.localStreamRef.current) {
@@ -200,5 +205,17 @@ export class RtcManager {
       console.error(e);
       return undefined;
     }
+  }
+
+  public getLocalVideoRef(): MutableRefObject<HTMLVideoElement> {
+    return RtcManager.localViedoRef;
+  }
+
+  public getLocalStreamReff(): MutableRefObject<MediaStream> {
+    return RtcManager.localStreamRef;
+  }
+
+  public getUsers(): UserProps[] {
+    return RtcManager.users;
   }
 }

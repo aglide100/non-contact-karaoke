@@ -2,16 +2,14 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import * as ws_manager from "../../utils/ws_manager";
 import * as rtc_manager from "../../utils/rtc_manager";
-// type RoomProps ={
-//     params: string
-// }
+import ViedoPlayer from "../../components/VideoPlayer";
 
-let client: ws_manager.WsManager;
+let wsclient: ws_manager.WsManager;
+let rtcclient: rtc_manager.RtcManager;
 
 const Room: React.FC = ({}) => {
   const router = useRouter();
   const { id } = router.query;
-  //const { pw } = router.query;
 
   const [chatMsg, setChatMsg] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
@@ -36,17 +34,36 @@ const Room: React.FC = ({}) => {
         setIsLoaded(true);
         clientTemp.joinRoom(roomID);
 
-        return (client = clientTemp);
+        return (wsclient = clientTemp);
       });
 
-      getRtcManager();
+      getRtcManager().then(function (clientTemp) {
+        return (rtcclient = clientTemp);
+      });
     }
   }, [router.isReady]);
 
   return (
     <>
       <div className="text-green-500">room id : {id}</div>
-      <video id="camera" autoPlay={true} playsInline={true}></video>
+      <video
+        style={{ width: 240, height: 240 }}
+        muted
+        autoPlay
+        ref={rtcclient.getLocalVideoRef()}
+      ></video>
+      {rtcclient.getUsers() != undefined ? (
+        rtcclient.getUsers().map((user, index) => {
+          <ViedoPlayer
+            key={index}
+            stream={user.stream}
+            name={user.name}
+          ></ViedoPlayer>;
+        })
+      ) : (
+        <>No users in room</>
+      )}
+
       <canvas id="photo"></canvas>
 
       <input
@@ -63,7 +80,7 @@ const Room: React.FC = ({}) => {
         className="options__button"
         onClick={(e) => {
           e.preventDefault();
-          client.sendChatMsg(chatMsg, id);
+          wsclient.sendChatMsg(chatMsg, id);
         }}
       >
         Send Message!
