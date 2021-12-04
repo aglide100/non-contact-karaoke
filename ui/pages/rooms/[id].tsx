@@ -1,9 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactElement, ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import * as ws_manager from "../../utils/ws_manager";
 import * as rtc_manager from "../../utils/rtc_manager";
+// import { localViedioPlayerProps } from "../../components/LocalVideoPlayer";
 import ViedoPlayer from "../../components/VideoPlayer";
+// import dynamic from "next/dynamic";
 
+// const MyVideo = dynamic(
+//   () =>
+//     import("../../components/LocalVideoPlayer").catch((err) => {
+//       return () => <>err..{err}</>;
+//     }),
+//   {
+//     loading: () => <></>,
+//     ssr: false,
+//   }
+// );
 let wsclient: ws_manager.WsManager;
 let rtcclient: rtc_manager.RtcManager;
 
@@ -13,6 +25,8 @@ const Room: React.FC = ({}) => {
 
   const [chatMsg, setChatMsg] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
+  const [videoList, setVideoList] = useState<ReactElement[]>([]);
+  const [localVideo, setLocalVideo] = useState<ReactElement>();
 
   async function getWsManager() {
     var clientTemp = await ws_manager.WsManager.getInstance();
@@ -30,11 +44,37 @@ const Room: React.FC = ({}) => {
 
       console.log("roomID: " + roomID);
 
-      getWsManager().then(function (clientTemp) {
+      getWsManager().then(function (wsclientTemp) {
         setIsLoaded(true);
-        clientTemp.joinRoom(roomID);
+        wsclientTemp.joinRoom(roomID);
+        wsclient = wsclientTemp;
 
-        return (wsclient = clientTemp);
+        getRtcManager().then(function (clientTemp) {
+          return (rtcclient = clientTemp);
+        });
+
+        let localVideoElement = (
+          <>
+            <video
+              style={{ width: 240, height: 240 }}
+              muted
+              autoPlay
+              ref={rtcclient.getLocalVideoRef()}
+            ></video>
+          </>
+        );
+
+        let videoListElement = rtcclient.getUsers().map((user, index) => {
+          return (
+            <ViedoPlayer
+              key={index}
+              stream={user.stream}
+              name={user.name}
+            ></ViedoPlayer>
+          );
+        });
+        setLocalVideo(localVideoElement);
+        setVideoList(videoListElement);
       });
 
       getRtcManager().then(function (clientTemp) {
@@ -46,23 +86,9 @@ const Room: React.FC = ({}) => {
   return (
     <>
       <div className="text-green-500">room id : {id}</div>
-      <video
-        style={{ width: 240, height: 240 }}
-        muted
-        autoPlay
-        ref={rtcclient.getLocalVideoRef()}
-      ></video>
-      {rtcclient.getUsers() != undefined ? (
-        rtcclient.getUsers().map((user, index) => {
-          <ViedoPlayer
-            key={index}
-            stream={user.stream}
-            name={user.name}
-          ></ViedoPlayer>;
-        })
-      ) : (
-        <>No users in room</>
-      )}
+
+      {localVideo}
+      {videoList}
 
       <canvas id="photo"></canvas>
 
