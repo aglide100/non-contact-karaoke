@@ -207,15 +207,13 @@ export class RtcManager {
     }
   }
 
-  public getLocalVideoRef(): MutableRefObject<HTMLVideoElement> {
-    return RtcManager.localViedoRef;
+  public async getLocalRef(callback: Function) {
+    await this.getLocalStream().then(() => {
+      callback(RtcManager.localViedoRef, RtcManager.localStreamRef);
+    });
   }
 
-  public getLocalStreamReff(): MutableRefObject<MediaStream> {
-    return RtcManager.localStreamRef;
-  }
-
-  public getUsers(): UserProps[] {
-    return RtcManager.users;
+  public async getUsers(callback: Function) {
+    callback(RtcManager.users);
   }
 }

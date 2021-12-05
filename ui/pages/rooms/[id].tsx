@@ -1,4 +1,10 @@
-import React, { ReactElement, ReactNode, useEffect, useState } from "react";
+import React, {
+  ReactElement,
+  ReactNode,
+  useEffect,
+  useState,
+  MutableRefObject,
+} from "react";
 import { useRouter } from "next/router";
 import * as ws_manager from "../../utils/ws_manager";
 import * as rtc_manager from "../../utils/rtc_manager";
@@ -27,6 +33,10 @@ const Room: React.FC = ({}) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [videoList, setVideoList] = useState<ReactElement[]>([]);
   const [localVideo, setLocalVideo] = useState<ReactElement>();
+  const [localViedoRef, setLocalVideoRef] =
+    useState<MutableRefObject<HTMLVideoElement>>();
+  const [localStreamRef, setLocalStreamRef] =
+    useState<MutableRefObject<MediaStream>>();
 
   async function getWsManager() {
     var clientTemp = await ws_manager.WsManager.getInstance();
@@ -50,31 +60,42 @@ const Room: React.FC = ({}) => {
         wsclient = wsclientTemp;
 
         getRtcManager().then(function (clientTemp) {
+          clientTemp.getLocalRef((localRef, streamRef) => {
+            setLocalVideoRef(localRef);
+            setLocalStreamRef(streamRef);
+          });
+
+          rtcclient.getUsers((res) => {
+            let videoListElement;
+            if (res != undefined) {
+              videoListElement = res.map((user, index) => {
+                return (
+                  <ViedoPlayer
+                    key={index}
+                    stream={user.stream}
+                    name={user.name}
+                  ></ViedoPlayer>
+                );
+              });
+            }
+
+            let localVideoElement = (
+              <>
+                <video
+                  style={{ width: 240, height: 240 }}
+                  muted
+                  autoPlay
+                  ref={localViedoRef}
+                ></video>
+              </>
+            );
+
+            setLocalVideo(localVideoElement);
+            setVideoList(videoListElement);
+          });
+
           return (rtcclient = clientTemp);
         });
-
-        let localVideoElement = (
-          <>
-            <video
-              style={{ width: 240, height: 240 }}
-              muted
-              autoPlay
-              ref={rtcclient.getLocalVideoRef()}
-            ></video>
-          </>
-        );
-
-        let videoListElement = rtcclient.getUsers().map((user, index) => {
-          return (
-            <ViedoPlayer
-              key={index}
-              stream={user.stream}
-              name={user.name}
-            ></ViedoPlayer>
-          );
-        });
-        setLocalVideo(localVideoElement);
-        setVideoList(videoListElement);
       });
 
       getRtcManager().then(function (clientTemp) {

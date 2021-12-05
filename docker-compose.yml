@@ -28,6 +28,13 @@ services:
       - 3500:3500
     links:
       - wsspostgres:app_db
+    environment:
+      FLAVOR: deploy
+      DB_USER: table_admin
+      DB_NAME: webapp
+      DB_PASSWORD: ${USERPWD}
+      DB_HOST: app_db
+      DB_PORT: 5432
   wsspostgres:
     container_name: wsspostgres
     build:
@@ -38,7 +45,7 @@ services:
         target: /var/lib/wsspostgres
     expose:
       - 5432
-    hostname: postgres
+    hostname: wsspostgres
     networks:
       - docker_network
     environment:
