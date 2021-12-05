@@ -62,3 +62,58 @@ export const ParStyle = {
   height: "55px",
   padding: "10px 10px",
 };
+
+export const ChattingFrame = {
+  background: "#0064CD",
+  width: "250px", 
+  height: "600px", 
+  overflow: "auto", 
+  margin: "250px 10px"
+};
+
+export const ProfileFrame = {
+  background: "gray",
+  width: "50px", 
+  height: "50px", 
+  margin: "40px 10px"
+};
+
+export const MessageFrame = {
+  background: "white", 
+  width: "140px", 
+  height: "50px", 
+  margin: "40px 20px"
+};
+
+export const UserFrame = {
+  width: "700px",
+  height: "800px",
+  margin:"0px 30px"
+};
+
+export const InnerUserFrame = { 
+  margin: "10px 10px"
+};
+
+export const UserScreen = {
+  width: "180px", 
+  height: "180px", 
+  border: "2px solid silver", 
+  margin: "40px 20px"
+};
+
+export const UserName = {
+  background: "silver", 
+  height:"40px", 
+  padding: "10px", 
+  margin:"112px 0px"
+};
+
+export const LyricsFrame = {
+  border: "1px solid black",
+  background: "silver",
+  width: "680px",
+  height: "510px",
+  margin: "10px",
+  padding: "20px 20px"
+};

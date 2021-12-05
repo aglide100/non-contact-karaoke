@@ -10,6 +10,14 @@ import {
   InnerRoomFrame,
   RoomListFrame,
   CurRoomStyleFrame,
+  MessageFrame,
+  ProfileFrame,
+  ChattingFrame,
+  UserFrame,
+  InnerUserFrame,
+  UserScreen,
+  UserName,
+  LyricsFrame
 } from "../../components/roomStyle";
 
 let client: ws_manager.WsManager;
@@ -142,6 +150,44 @@ const Rooms: React.FC = ({}) => {
           </div>
         </>
       )}
+
+
+      <div style= {ChattingFrame} className="flex flex-row justify center">
+        
+        <div style= {ProfileFrame}>
+           프로필
+        </div>
+
+        <div style= {MessageFrame}>
+          채팅 메시지
+        </div>
+
+        </div>
+     
+     <div style={UserFrame}>
+
+       <div className = "flex direction: column" style={InnerUserFrame}>
+     <div style={UserScreen}> 
+     사용자 영상화면
+
+     <div style= {UserName}>
+       사용자 이름
+     </div>
+     </div>
+
+     <div style={UserScreen}> 
+     사용자 영상화면
+     <div style= {UserName}>
+       사용자 이름
+     </div>
+     </div>
+     </div>
+
+     <div style={LyricsFrame}>
+    가사 송출화면
+     </div>
+
+     </div>
     </div>
   );
 };
