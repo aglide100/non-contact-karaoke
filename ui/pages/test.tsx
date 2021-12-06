@@ -22,7 +22,7 @@ const pc_config = {
     },
   ],
 };
-const SOCKET_SERVER_URL = "http://localhost:8888";
+const SOCKET_SERVER_URL = "ws://localhost:8888";
 
 const Test = () => {
   const router = useRouter();

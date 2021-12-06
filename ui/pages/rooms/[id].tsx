@@ -31,7 +31,9 @@ const pc_config = {
     },
   ],
 };
-const SOCKET_SERVER_URL = "http://localhost:8888";
+// const SOCKET_SERVER_URL = "http://localhost:8888";
+
+const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 
 let wsclient: ws_manager.WsManager;
 let rtcclient: rtc_manager.RtcManager;
@@ -64,8 +66,8 @@ const Room: React.FC = ({}) => {
       const localStream = await navigator.mediaDevices.getUserMedia({
         audio: true,
         video: {
-          width: 240,
-          height: 240,
+          width: 640,
+          height: 480,
         },
       });
       localStreamRef.current = localStream;
@@ -265,6 +267,7 @@ const Room: React.FC = ({}) => {
         muted
         ref={localVideoRef}
         autoPlay
+        playsInline
       />
       {users.map((user, index) => (
         <Video key={index} email={user.email} stream={user.stream} />
