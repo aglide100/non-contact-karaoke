@@ -1,17 +1,8 @@
-import React, {
-  ReactElement,
-  ReactNode,
-  useEffect,
-  useState,
-  useRef,
-  MutableRefObject,
-  useCallback,
-} from "react";
+// eslint-disable-next-line
 import { useRouter } from "next/router";
-import * as ws_manager from "../../utils/ws_manager";
-import * as rtc_manager from "../../utils/rtc_manager";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import io, { SocketIOClient } from "socket.io-client";
-import Video from "../../components/Video";
+import Video from "../components/Video";
 
 type WebRTCUser = {
   id: string;
@@ -33,31 +24,14 @@ const pc_config = {
 };
 const SOCKET_SERVER_URL = "http://localhost:8888";
 
-let wsclient: ws_manager.WsManager;
-let rtcclient: rtc_manager.RtcManager;
-
-const Room: React.FC = ({}) => {
+const Test = () => {
   const router = useRouter();
-  const { id } = router.query;
-
-  const [chatMsg, setChatMsg] = useState("");
-  const [isLoaded, setIsLoaded] = useState(false);
 
   const socketRef = useRef<SocketIOClient.Socket>();
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream>();
   const [users, setUsers] = useState<WebRTCUser[]>([]);
-
-  async function getWsManager() {
-    var clientTemp = await ws_manager.WsManager.getInstance();
-    return clientTemp;
-  }
-
-  async function getRtcManager() {
-    var clientTemp = await rtc_manager.RtcManager.getInstance();
-    return clientTemp;
-  }
 
   const getLocalStream = useCallback(async () => {
     try {
@@ -132,17 +106,6 @@ const Room: React.FC = ({}) => {
   );
 
   useEffect(() => {
-    if (!isLoaded && router.isReady) {
-      let roomID = JSON.stringify(router.query.id);
-      console.log("roomID: " + roomID);
-
-      getWsManager().then(function (wsclientTemp) {
-        setIsLoaded(true);
-      });
-    }
-  }, [router.isReady]);
-
-  useEffect(() => {
     socketRef.current = io.connect(SOCKET_SERVER_URL);
     getLocalStream();
 
@@ -161,7 +124,6 @@ const Room: React.FC = ({}) => {
             });
             console.log("create offer success");
             await pc.setLocalDescription(new RTCSessionDescription(localSdp));
-
             socketRef.current.emit("offer", {
               sdp: localSdp,
               offerSendID: socketRef.current.id,
@@ -253,8 +215,7 @@ const Room: React.FC = ({}) => {
   }, [createPeerConnection, getLocalStream]);
 
   return (
-    <>
-      <div className="text-green-500">room id : {id}</div>
+    <div>
       <video
         style={{
           width: 240,
@@ -269,27 +230,8 @@ const Room: React.FC = ({}) => {
       {users.map((user, index) => (
         <Video key={index} email={user.email} stream={user.stream} />
       ))}
-      <input
-        id="chat_message"
-        type="text"
-        autoComplete="off"
-        placeholder="Type message here..."
-        onChange={(e) => {
-          setChatMsg(e.target.value);
-        }}
-      />
-      <div
-        id="send"
-        className="options__button"
-        onClick={(e) => {
-          e.preventDefault();
-          wsclient.sendChatMsg(chatMsg, id);
-        }}
-      >
-        Send Message!
-      </div>
-    </>
+    </div>
   );
 };
 
-export default Room;
+export default Test;
