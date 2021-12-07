@@ -31,9 +31,9 @@ const pc_config = {
     },
   ],
 };
-// const SOCKET_SERVER_URL = "http://localhost:8888";
+const SOCKET_SERVER_URL = "ws://localhost:8888";
 
-const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
+// const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 
 let wsclient: ws_manager.WsManager;
 let rtcclient: rtc_manager.RtcManager;

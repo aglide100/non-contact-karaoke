@@ -1,3 +1,4 @@
 export const config = {
-  url: "wss://wss.non-contact-karaoke.xyz",
+  url: "ws://localhost:8888",
+  // url: "wss://wss.non-contact-karaoke.xyz",
 };

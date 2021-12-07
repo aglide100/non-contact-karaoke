@@ -1,8 +1,8 @@
 import * as ws_config from "./ws_config";
-import * as ws_configDev from "./ws_configDev";
 import * as commonType from "../common/socket-message";
 import router, { NextRouter, Router } from "next/router";
 import { EventEmitter } from "events";
+import io, { SocketIOClient } from "socket.io-client";
 import { useRef } from "react";
 /*
   websocket readyState field
@@ -17,11 +17,15 @@ type room = {
   userID: string[];
 };
 
+const SOCKET_SERVER_URL = "ws://localhost:8888";
+
+// const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
+
 export type cancelFunc = () => void;
 
 export class WsManager extends EventEmitter {
   private static instance: WsManager;
-  private client: WebSocket;
+  private client: SocketIOClient.Socket;
   private static userID: string;
   private static userName: string;
   private static userToken: string;
@@ -31,14 +35,10 @@ export class WsManager extends EventEmitter {
 
   constructor() {
     super();
-    if (process.env.FLAVOR == undefined) {
-      console.log("trying connect to " + ws_configDev.config.url + "....");
-      this.client = new WebSocket(ws_configDev.config.url);
-    } else {
-      console.log("trying connect to " + ws_config.config.url + "....");
-      this.client = new WebSocket(ws_config.config.url);
-    }
 
+    console.log("trying connect to " + ws_config.config.url + "....");
+    // this.client = new WebSocket(ws_config.config.url);
+    this.client = io.connect(SOCKET_SERVER_URL);
     this.client.onopen = this.onOpen;
     this.client.onclose = this.onClose;
     this.client.onerror = this.onError;
