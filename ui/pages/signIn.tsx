@@ -82,7 +82,7 @@ function SignInpage() {
     const axiosObj = axios.default;
 
     axiosObj
-      .post("https://api.non-contact-karaoke/api/member/login", data, {
+      .post("https://api.non-contact-karaoke.xyz/api/member/login", data, {
         headers: {
           "Content-Type": "application/json",
         },
