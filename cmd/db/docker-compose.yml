@@ -19,7 +19,7 @@ services:
     environment:
       #PGDATA: /var/lib/postgresql/data
       POSTGRES_DB: webapp
-      #POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_USER: table_admin
       POSTGRES_PASSWORD: ${USERPWD}
       POSTGRES_INITDB_ARGS: --encoding=UTF-8

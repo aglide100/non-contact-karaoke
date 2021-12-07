@@ -1,5 +1,3 @@
-GRANT ALL PRIVILEGES ON DATABASE webapp TO table_admin;
-
 create table if not exists "Member"
 (
     member_no varchar not null
