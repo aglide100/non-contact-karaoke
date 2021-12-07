@@ -4,7 +4,8 @@ module.exports = {
     return [
       {
         key: "Permissions-Policy",
-        value: "camera=(), microphone=(), geolocation=(), interest-cohort=()",
+        value:
+          "camera=(none), microphone=(none), geolocation=(none), interest-cohort=(none)",
       },
     ];
   },
