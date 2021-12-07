@@ -1,5 +1,4 @@
 import React, { ReactElement, useEffect, useState } from "react";
-import * as ws_manager from "../../utils/ws_manager";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
 
 import {
@@ -11,8 +10,6 @@ import {
   RoomListFrame,
   CurRoomStyleFrame,
 } from "../../components/roomStyle";
-
-let client: ws_manager.WsManager;
 
 type roomProps = {
   roomId: string;
@@ -46,30 +43,8 @@ const Rooms: React.FC = ({}) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [roomListData, setRoomListData] = useState([]);
 
-  async function getWsManager() {
-    return await ws_manager.WsManager.getInstance();
-  }
-
   useEffect(() => {
     if (!isLoaded) {
-      getWsManager()
-        .then(function (clientTemp) {
-          return (client = clientTemp);
-        })
-        .finally(() => {
-          if (client != undefined) {
-            let list;
-            client.on("res-get-rooms", () => {
-              list = client.getRoomIdList();
-              console.log("list!" + list);
-              setRoomListData(list);
-
-              setIsLoaded(true);
-            });
-
-            client.getRooms();
-          }
-        });
     }
     return () => setIsLoaded(true);
   }, []);
@@ -93,10 +68,7 @@ const Rooms: React.FC = ({}) => {
   }
 
   function onDeleteClick(roomId) {
-    alert("delte wip");
-    getWsManager().then((client) => {
-      // call delete room event
-    });
+    alert("delete is wip");
   }
 
   function onHandleClick(roomId, roomTitle) {
@@ -105,9 +77,6 @@ const Rooms: React.FC = ({}) => {
       roomTitle: roomTitle,
     };
 
-    getWsManager().then((client) => {
-      // call get user list in room
-    });
     setOnClickRoomData(data);
   }
 

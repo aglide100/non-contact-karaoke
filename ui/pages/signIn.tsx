@@ -3,8 +3,7 @@ import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
 import { setCookie } from "../utils/cookie";
-import { WsManager } from "../utils/ws_manager";
-let client: WsManager;
+import * as axios from "axios";
 
 function SignInpage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -56,31 +55,8 @@ function SignInpage() {
     return { isInvalid: false };
   };
 
-  async function getWsManager() {
-    var clientTemp = await WsManager.getInstance();
-    return clientTemp;
-  }
-
   useEffect(() => {
     if (!isLoaded) {
-      getWsManager()
-        .then(function (clientTemp) {
-          setIsLoaded(true);
-          clientTemp.on("res-login-user", () => {
-            setCookie("userId", clientTemp.getUserID());
-            setCookie("userName", clientTemp.getUserName());
-            setCookie("userToken", clientTemp.getUserToken());
-            alert("로그인 되었습니다!");
-            document.location.href = "/";
-          });
-          clientTemp.on("res-login-error", () => {
-            alert("It looks like error?");
-          });
-          return (client = clientTemp);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   });
 
@@ -99,7 +75,29 @@ function SignInpage() {
   const onSubmitHandler = (event) => {
     event.preventDefault();
 
-    client.login(userID, userPassword);
+    const data = JSON.stringify({
+      member_no: userID,
+      password: userPassword,
+    });
+    const axiosObj = axios.default;
+
+    axiosObj
+      .post("https://api.non-contact-karaoke/api/member/login", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("Successfully posted data! get data!" + response);
+        setCookie("accessToken", response.data.accessToken);
+        setCookie("user_name", response.data.user);
+        setCookie("user_id", userID);
+
+        document.location.href = "/";
+      })
+      .catch((error) => {
+        alert("데이터를 전송하지 못했습니다!" + error);
+      });
   };
 
   return (

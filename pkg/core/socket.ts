@@ -5,7 +5,6 @@ import { IncomingMessage } from "http";
 import * as uuid from "uuid";
 import * as commonType from "../../ui/common/socket-message";
 import * as room from "./model/socket/room";
-import { WebSocketHandler } from "./handler/webSocketHandler";
 import { throws } from "assert";
 let socketio = require("socket.io");
 
@@ -79,33 +78,27 @@ export class Server {
 
       socket.on("offer", (data: any) => {
         //console.log(data.sdp);
-        socket
-          .to(data.offerReceiveID)
-          .emit("getOffer", {
-            sdp: data.sdp,
-            offerSendID: data.offerSendID,
-            offerSendEmail: data.offerSendEmail,
-          });
+        socket.to(data.offerReceiveID).emit("getOffer", {
+          sdp: data.sdp,
+          offerSendID: data.offerSendID,
+          offerSendEmail: data.offerSendEmail,
+        });
       });
 
       socket.on("answer", (data: any) => {
         //console.log(data.sdp);
-        socket
-          .to(data.answerReceiveID)
-          .emit("getAnswer", {
-            sdp: data.sdp,
-            answerSendID: data.answerSendID,
-          });
+        socket.to(data.answerReceiveID).emit("getAnswer", {
+          sdp: data.sdp,
+          answerSendID: data.answerSendID,
+        });
       });
 
       socket.on("candidate", (data: any) => {
         //console.log(data.candidate);
-        socket
-          .to(data.candidateReceiveID)
-          .emit("getCandidate", {
-            candidate: data.candidate,
-            candidateSendID: data.candidateSendID,
-          });
+        socket.to(data.candidateReceiveID).emit("getCandidate", {
+          candidate: data.candidate,
+          candidateSendID: data.candidateSendID,
+        });
       });
 
       socket.on("disconnect", () => {

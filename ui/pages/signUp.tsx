@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Button } from "../components/Button";
 import { InputField, ValidationResult } from "../components/InputField";
 import { useRouter } from "next/router";
-import { WsManager } from "../utils/ws_manager";
 import { setCookie } from "../utils/cookie";
-
-let client: WsManager;
+import * as axios from "axios";
 
 function SignUpPage() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -80,31 +78,8 @@ function SignUpPage() {
     return { isInvalid: false };
   };
 
-  async function getWsManager() {
-    var clientTemp = await WsManager.getInstance();
-    return clientTemp;
-  }
-
   useEffect(() => {
     if (!isLoaded) {
-      getWsManager()
-        .then(function (clientTemp) {
-          setIsLoaded(true);
-          clientTemp.on("res-join-user", () => {
-            setCookie("userId", clientTemp.getUserID());
-            setCookie("userName", clientTemp.getUserName());
-            setCookie("userToken", clientTemp.getUserToken());
-            alert("회원가입 되었습니다!");
-            document.location.href = "/";
-          });
-          clientTemp.on("res-join-error", () => {
-            alert("It looks like error?");
-          });
-          return (client = clientTemp);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
     }
   });
 
@@ -123,7 +98,27 @@ function SignUpPage() {
   const onSubmitHandler = (event) => {
     event.preventDefault();
 
-    client.join(userID, userPassword, userName);
+    const data = JSON.stringify({
+      member_no: userID,
+      password: userPassword,
+      name: userName,
+    });
+    const axiosObj = axios.default;
+
+    axiosObj
+      .post("https://api.non-contact-karaoke/api/member/join", data, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("Successfully posted data! get data!" + response);
+        alert("회원가입에 성공하였습니다.");
+        router.push("/");
+      })
+      .catch((error) => {
+        alert("데이터를 전송하지 못했습니다!" + error);
+      });
   };
 
   return (

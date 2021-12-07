@@ -8,8 +8,6 @@ import React, {
   useCallback,
 } from "react";
 import { useRouter } from "next/router";
-import * as ws_manager from "../../utils/ws_manager";
-import * as rtc_manager from "../../utils/rtc_manager";
 import io, { SocketIOClient } from "socket.io-client";
 import Video from "../../components/Video";
 
@@ -31,12 +29,8 @@ const pc_config = {
     },
   ],
 };
-// const SOCKET_SERVER_URL = "ws://localhost:8888";
 
 const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
-
-let wsclient: ws_manager.WsManager;
-let rtcclient: rtc_manager.RtcManager;
 
 const Room: React.FC = ({}) => {
   const router = useRouter();
@@ -127,17 +121,6 @@ const Room: React.FC = ({}) => {
     },
     []
   );
-
-  // useEffect(() => {
-  //   if (!isLoaded && router.isReady) {
-  //     let roomID = JSON.stringify(router.query.id);
-  //     console.log("roomID: " + roomID);
-
-  //     getWsManager().then(function (wsclientTemp) {
-  //       setIsLoaded(true);
-  //     });
-  //   }
-  // }, [router.isReady]);
 
   useEffect(() => {
     socketRef.current = io.connect(SOCKET_SERVER_URL);
@@ -281,7 +264,6 @@ const Room: React.FC = ({}) => {
         className="options__button"
         onClick={(e) => {
           e.preventDefault();
-          wsclient.sendChatMsg(chatMsg, id);
         }}
       >
         Send Message!

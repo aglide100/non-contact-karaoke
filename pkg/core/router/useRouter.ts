@@ -15,7 +15,7 @@ export class UseRouter {
   private app: Express;
   private rules: rule[];
 
-  constructor(app: Express, version: string) {
+  constructor(app: Express) {
     this.app = app;
     this.rules = new Array();
   }

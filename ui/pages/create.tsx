@@ -1,28 +1,23 @@
+import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
-
-import { WsManager } from "../utils/ws_manager";
-let client: WsManager;
 
 const CreatePage: React.FC<{}> = ({}) => {
   const [roomTitle, setRoomTitle] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
-  async function getWsManager() {
-    var clientTemp = await WsManager.getInstance();
-    return clientTemp;
-  }
 
-  useEffect(() => {
-    if (!isLoaded) {
-      setIsLoaded(true);
-      getWsManager()
-        .then(function (clientTemp) {
-          return (client = clientTemp);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    }
-  });
+  const router = useRouter();
+
+  // useEffect(() => {
+  //   if (!isLoaded) {
+  //     setIsLoaded(true);
+  //       // .then(function (clientTemp) {
+  //       //   return (client = clientTemp);
+  //       // })
+  //       // .catch((error) => {
+  //       //   console.log(error);
+  //       // });
+  //   }
+  // });
 
   return (
     <>
@@ -38,7 +33,8 @@ const CreatePage: React.FC<{}> = ({}) => {
           onClick={(e) => {
             e.preventDefault();
             if (isLoaded) {
-              client.createNewRoom(roomTitle);
+              // client.createNewRoom(roomTitle);
+              router.push({ pathname: "/rooms", query: roomTitle });
             }
           }}
         >

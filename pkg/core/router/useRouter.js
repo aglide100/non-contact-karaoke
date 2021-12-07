@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UseRouter = void 0;
 var bodyParser = require("body-parser");
 class UseRouter {
-    constructor(app, version) {
+    constructor(app) {
         this.app = app;
         this.rules = new Array();
     }
