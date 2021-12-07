@@ -32,10 +32,8 @@ const CreatePage: React.FC<{}> = ({}) => {
         <div
           onClick={(e) => {
             e.preventDefault();
-            if (isLoaded) {
-              // client.createNewRoom(roomTitle);
-              router.push({ pathname: "/rooms", query: roomTitle });
-            }
+
+            router.push({ pathname: "/rooms", query: roomTitle });
           }}
         >
           Create New room!

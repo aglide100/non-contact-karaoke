@@ -45,9 +45,9 @@ export default function Layout({
           {userName} |{" "}
           <span
             onClick={() => {
-              removeCookie("userName");
-              removeCookie("userId");
-              removeCookie("userToken");
+              removeCookie("user_name");
+              removeCookie("user_id");
+              removeCookie("accessToken");
 
               document.location.href = "/";
             }}
