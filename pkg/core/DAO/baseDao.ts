@@ -46,7 +46,7 @@ export class BaseDao {
 
     if (DBName == undefined) {
       console.log("Can't read DBName in Env file! I'll use default DBName!");
-      this.config.user = "webapp";
+      this.config.database = "webapp";
     }
   }
 
