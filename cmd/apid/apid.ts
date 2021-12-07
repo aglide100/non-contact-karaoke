@@ -2,7 +2,7 @@ import express from "express";
 import { UseRouter } from "../../pkg/core/router/useRouter";
 import { MemberController } from "../../pkg/core/controller/memberController";
 
-const port = 4000;
+const port = 8889;
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

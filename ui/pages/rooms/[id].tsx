@@ -10,6 +10,7 @@ import React, {
 import { useRouter } from "next/router";
 import io, { SocketIOClient } from "socket.io-client";
 import Video from "../../components/Video";
+import { getCookie } from "../../utils/cookie";
 
 type WebRTCUser = {
   id: string;
@@ -35,6 +36,7 @@ const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 const Room: React.FC = ({}) => {
   const router = useRouter();
   const { id } = router.query;
+  const userID = getCookie("user_name");
 
   const [chatMsg, setChatMsg] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);
@@ -64,7 +66,7 @@ const Room: React.FC = ({}) => {
       if (!socketRef.current) return;
       socketRef.current.emit("join_room", {
         room: { id },
-        email: "sample@naver.com",
+        email: { userID },
       });
     } catch (e) {
       console.log(`getUserMedia error: ${e}`);

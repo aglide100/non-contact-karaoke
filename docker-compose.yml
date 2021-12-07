@@ -3,19 +3,6 @@ x-services-volume: &services-volume
   type: bind
 
 services:
-  # node:
-  #   container_name: node
-  #   build:
-  #     context: ./ui
-  #   hostname: node
-  #   # volumes:
-  #   #   - <<: *services-volume
-  #   #     source: ./common
-  #   #     target: /usr/src/common
-  #   networks:
-  #     - docker_network
-  #   ports:
-  #     - 3000:3000
   wss:
     container_name: wss
     build:
@@ -24,6 +11,7 @@ services:
     networks:
       - docker_network
     ports:
+      - 8889:8889
       - 8888:8888
       - 3500:3500
     links:

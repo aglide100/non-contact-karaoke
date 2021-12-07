@@ -18,9 +18,9 @@ export default function Layout({
   const [loginMenu, setLoginMenu] = useState<ReactElement>();
 
   useEffect(() => {
-    const userId = getCookie("userId");
-    const userName = getCookie("userName");
-    const userToken = getCookie("userToken");
+    const userId = getCookie("user_id");
+    const userName = getCookie("user_name");
+    const userToken = getCookie("accessToken");
     console.log("token" + userId);
     if (
       userId == undefined ||
