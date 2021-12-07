@@ -14,17 +14,17 @@ class UseRouter {
     handleRoute() {
         this.rules.map((rule) => {
             if (rule.method === "GET") {
-                this.app.get("/api/" + rule.pattern, rule.handler);
+                this.app.get(rule.pattern, rule.handler);
             }
             if (rule.method === "DELETE") {
-                this.app.delete("/api/" + rule.pattern, rule.handler);
+                this.app.delete(rule.pattern, rule.handler);
             }
             if (rule.method === "POST") {
                 var urlencodedParser = bodyParser.urlencoded({ extended: false });
-                this.app.post("/api/" + rule.pattern, urlencodedParser, rule.handler);
+                this.app.post(rule.pattern, urlencodedParser, rule.handler);
             }
             if (rule.method === "PUT") {
-                this.app.put("/api/" + rule.pattern, rule.handler);
+                this.app.put(rule.pattern, rule.handler);
             }
         });
     }
