@@ -67,6 +67,7 @@ const Room: React.FC = ({}) => {
       localStreamRef.current = localStream;
       if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
       if (!socketRef.current) return;
+      console.log("In getLocalStream", id, userID);
       socketRef.current.emit("join_room", {
         room: { id },
         email: { userID },
@@ -96,7 +97,7 @@ const Room: React.FC = ({}) => {
         };
 
         pc.ontrack = (e) => {
-          console.log("ontrack success");
+          console.log("ontrack success", email);
           setUsers((oldUsers) =>
             oldUsers
               .filter((user) => user.id !== socketID)
@@ -144,13 +145,13 @@ const Room: React.FC = ({}) => {
               offerToReceiveAudio: true,
               offerToReceiveVideo: true,
             });
-            console.log("create offer success");
+            console.log("create offer success", user.email, user.id);
             await pc.setLocalDescription(new RTCSessionDescription(localSdp));
 
             socketRef.current.emit("offer", {
               sdp: localSdp,
               offerSendID: socketRef.current.id,
-              offerSendEmail: "offerSendSample@sample.com",
+              offerSendEmail: user.email,
               offerReceiveID: user.id,
             });
           } catch (e) {

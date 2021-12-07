@@ -33,7 +33,7 @@ const CreatePage: React.FC<{}> = ({}) => {
           onClick={(e) => {
             e.preventDefault();
 
-            router.push({ pathname: "/rooms", query: roomTitle });
+            router.push("/rooms/" + `"` + roomTitle + `"`);
           }}
         >
           Create New room!
