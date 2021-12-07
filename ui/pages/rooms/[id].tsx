@@ -31,9 +31,9 @@ const pc_config = {
     },
   ],
 };
-const SOCKET_SERVER_URL = "ws://localhost:8888";
+// const SOCKET_SERVER_URL = "ws://localhost:8888";
 
-// const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
+const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 
 let wsclient: ws_manager.WsManager;
 let rtcclient: rtc_manager.RtcManager;
@@ -51,15 +51,10 @@ const Room: React.FC = ({}) => {
   const localStreamRef = useRef<MediaStream>();
   const [users, setUsers] = useState<WebRTCUser[]>([]);
 
-  async function getWsManager() {
-    var clientTemp = await ws_manager.WsManager.getInstance();
-    return clientTemp;
-  }
-
-  async function getRtcManager() {
-    var clientTemp = await rtc_manager.RtcManager.getInstance();
-    return clientTemp;
-  }
+  // async function getWsManager() {
+  //   var clientTemp = await ws_manager.WsManager.getInstance();
+  //   return clientTemp;
+  // }
 
   const getLocalStream = useCallback(async () => {
     try {
@@ -74,7 +69,7 @@ const Room: React.FC = ({}) => {
       if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
       if (!socketRef.current) return;
       socketRef.current.emit("join_room", {
-        room: "1234",
+        room: { id },
         email: "sample@naver.com",
       });
     } catch (e) {
@@ -133,16 +128,16 @@ const Room: React.FC = ({}) => {
     []
   );
 
-  useEffect(() => {
-    if (!isLoaded && router.isReady) {
-      let roomID = JSON.stringify(router.query.id);
-      console.log("roomID: " + roomID);
+  // useEffect(() => {
+  //   if (!isLoaded && router.isReady) {
+  //     let roomID = JSON.stringify(router.query.id);
+  //     console.log("roomID: " + roomID);
 
-      getWsManager().then(function (wsclientTemp) {
-        setIsLoaded(true);
-      });
-    }
-  }, [router.isReady]);
+  //     getWsManager().then(function (wsclientTemp) {
+  //       setIsLoaded(true);
+  //     });
+  //   }
+  // }, [router.isReady]);
 
   useEffect(() => {
     socketRef.current = io.connect(SOCKET_SERVER_URL);

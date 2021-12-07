@@ -39,6 +39,7 @@ export class WsManager extends EventEmitter {
     console.log("trying connect to " + ws_config.config.url + "....");
     // this.client = new WebSocket(ws_config.config.url);
     this.client = io.connect(SOCKET_SERVER_URL);
+
     this.client.onopen = this.onOpen;
     this.client.onclose = this.onClose;
     this.client.onerror = this.onError;
