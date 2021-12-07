@@ -36,7 +36,10 @@ const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 const Room: React.FC = ({}) => {
   const router = useRouter();
   const { id } = router.query;
-  const userID = getCookie("user_name");
+  let userID = getCookie("user_name");
+  if (userID == undefined) {
+    userID = 'unamed'
+  }
 
   const [chatMsg, setChatMsg] = useState("");
   const [isLoaded, setIsLoaded] = useState(false);

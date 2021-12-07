@@ -106,7 +106,7 @@ function SignUpPage() {
     const axiosObj = axios.default;
 
     axiosObj
-      .post("https://api.non-contact-karaoke.xyz/api/member/join", data, {
+      .post("https://api.non-contact-karaoke.xyz/member/join", data, {
         headers: {
           "Content-Type": "application/json",
         },

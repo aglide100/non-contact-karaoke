@@ -12,7 +12,9 @@ const MemberCtrl = new MemberController();
 
 const cors = require("cors");
 app.use(cors());
-
+app.get("/", (req, res) => {
+  res.send("Hello");
+});
 server.addRule(
   "/member/list",
   "GET",
