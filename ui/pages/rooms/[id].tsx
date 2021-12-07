@@ -38,7 +38,7 @@ const Room: React.FC = ({}) => {
   const { id } = router.query;
   let userID = getCookie("user_name");
   if (userID == undefined) {
-    userID = 'unamed'
+    userID = "unamed";
   }
 
   const [chatMsg, setChatMsg] = useState("");
@@ -238,23 +238,27 @@ const Room: React.FC = ({}) => {
   }, [createPeerConnection, getLocalStream]);
 
   return (
-    <>
-      <div className="text-green-500">room id : {id}</div>
-      <video
-        style={{
-          width: 240,
-          height: 240,
-          margin: 5,
-          backgroundColor: "black",
-        }}
-        muted
-        ref={localVideoRef}
-        autoPlay
-        playsInline
-      />
-      {users.map((user, index) => (
-        <Video key={index} email={user.email} stream={user.stream} />
-      ))}
+    <div className="flex flex-col">
+      <div className="flex flex-col">
+        <div className="text-green-500">room id : {id}</div>
+        <div className="flex flex-row">
+          <video
+            style={{
+              width: 240,
+              height: 240,
+              margin: 5,
+              backgroundColor: "black",
+            }}
+            muted
+            ref={localVideoRef}
+            autoPlay
+            playsInline
+          />
+          {users.map((user, index) => (
+            <Video key={index} email={user.email} stream={user.stream} />
+          ))}
+        </div>
+      </div>
       <input
         id="chat_message"
         type="text"
@@ -273,7 +277,7 @@ const Room: React.FC = ({}) => {
       >
         Send Message!
       </div>
-    </>
+    </div>
   );
 };
 
