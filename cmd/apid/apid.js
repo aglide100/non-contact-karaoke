@@ -14,6 +14,9 @@ const server = new useRouter_1.UseRouter(app);
 const MemberCtrl = new memberController_1.MemberController();
 const cors = require("cors");
 app.use(cors());
+app.get("/", (req, res) => {
+    res.send("Hello");
+});
 server.addRule("/member/list", "GET", "member list", "Member list", MemberCtrl.list());
 server.addRule("/member/join", "POST", "member join", "Member Join", MemberCtrl.join());
 server.addRule("/member/login", "POST", "login member", "Member", MemberCtrl.login());

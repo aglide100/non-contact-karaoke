@@ -1,12 +1,11 @@
-const securityHeaders = [];
+const headers = require('./headers');
+
 module.exports = {
   async Headers() {
     return [
       {
-        src: "/.*",
-        headers: {
-          "Permissions-Policy": "none",
-        },
+        source: "/.*",
+        headers,
       },
     ];
   },

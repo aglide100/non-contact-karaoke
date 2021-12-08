@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import React, { useState, useEffect } from "react";
+import { setCookie } from "../utils/cookie";
 
 const CreatePage: React.FC<{}> = ({}) => {
   const [roomTitle, setRoomTitle] = useState("");
@@ -32,8 +33,8 @@ const CreatePage: React.FC<{}> = ({}) => {
         <div
           onClick={(e) => {
             e.preventDefault();
-
-            router.push("/rooms/" + `"` + roomTitle + `"`);
+            setCookie("room_id", roomTitle)
+            router.push("/room/");
           }}
         >
           Create New room!

@@ -50,7 +50,7 @@ class BaseDao {
         }
         if (DBName == undefined) {
             console_1.default.log("Can't read DBName in Env file! I'll use default DBName!");
-            this.config.user = "webapp";
+            this.config.database = "webapp";
         }
     }
     connectDB() {
