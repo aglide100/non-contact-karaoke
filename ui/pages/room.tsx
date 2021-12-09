@@ -74,24 +74,24 @@ const pc_config = {
 
 const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 
-const constraints = {
-  audio: true,
-  video: { width: 640, height: 480 },
-};
 
 const Test = () => {
-  const router = useRouter();
+  // const router = useRouter();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream>(null);
 
   let roomId = getCookie("room_id");
+  // if (isNaN(roomId)) {
+  //   roomId = roomId.toString()
+  // }
+
   let userID = getCookie("user_name");
   if (userID == undefined) {
     userID = "unamed";
   }
 
   if (roomId == undefined) {
-    roomId = "undefined";
+    roomId = "";
   }
   const socketRef = useRef<SocketIOClient.Socket>();
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
@@ -164,9 +164,9 @@ const Test = () => {
       setPlaying(true);
       localStreamRef.current = localStream;
       if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
-
+  
       socketRef.current.emit("join_room", {
-        room: roomId,
+        room: roomId.toString(),
         email: userID,
       });
     });
@@ -302,6 +302,7 @@ const Test = () => {
         <video
           ref={localVideoRef}
           autoPlay
+          playsInline
           style={{ width: "300px", height: "300px" }}
         />
         {users.map((user, index) => (
@@ -309,7 +310,7 @@ const Test = () => {
         ))}
       </div>
       <button color="warning" onClick={() => startOrStop()}>
-        {playing ? "Stop" : "Start"}{" "}
+        {playing ? "Stop" : "Start"}
       </button>
     </div>
   );

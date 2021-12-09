@@ -5,7 +5,6 @@ import { IncomingMessage } from "http";
 import * as uuid from "uuid";
 import * as commonType from "../../ui/common/socket-message";
 import * as room from "./model/socket/room";
-import { throws } from "assert";
 let socketio = require("socket.io");
 
 type user = {
@@ -14,9 +13,8 @@ type user = {
 };
 
 type room = {
-  roomID: string;
-  userID: string[];
 };
+
 const maximum = process.env.MAXIMUM || 4;
 
 export class Server {
@@ -56,14 +54,22 @@ export class Server {
             return;
           }
           this.users[data.room].push({ id: socket.id, email: data.email });
+          this.rooms.map((room) => {
+            if (room !== data.room) {
+              return data.room
+            }
+          })
+          // this.rooms.push({roomId: data.room})
         } else {
           this.users[data.room] = [{ id: socket.id, email: data.email }];
+          this.rooms = [{roomId: data.room}]
         }
         this.socketToRoom[socket.id] = data.room;
 
         socket.join(data.room);
         console.log(`[${this.socketToRoom[socket.id]}]: ${socket.id} enter`);
 
+        console.log("users: ", this.users)
         const usersInThisRoom = this.users[data.room].filter(
           (user: any) => user.id !== socket.id
         );
@@ -74,8 +80,23 @@ export class Server {
       });
 
       socket.on("get_rooms", (data: any) => {
-        this.io.sockets.to(socket.id).emit("all_rooms", this.socketToRoom);
+        // let rooms = []
+        // rooms = Object.values(this.users)
+        // rooms = rooms.map((room) => {
+        //   return ({
+        //     id: room.id,
+        //     email: room.email,
+        //     room,
+        //   })
+        // })
+        this.io.sockets.to(socket.id).emit("all_rooms", this.rooms);
       });
+
+
+      socket.on("get_users", (data: any) => {
+        const usersInThisRoom = this.users[data.room]
+        this.io.sockets.to(socket.id).emit("in_users", usersInThisRoom);
+      })
 
       socket.on("offer", (data: any) => {
         //console.log(data.sdp);
@@ -107,15 +128,17 @@ export class Server {
         const roomID = this.socketToRoom[socket.id];
         let room = this.users[roomID];
         if (room) {
+          this.rooms.filter((room) => room !== roomID)
           room = room.filter((user: any) => user.id !== socket.id);
           this.users[roomID] = room;
           if (room.length === 0) {
             delete this.users[roomID];
+            this.users = this.users.filter((user) => user != null)
             return;
           }
         }
         socket.to(roomID).emit("user_exit", { id: socket.id });
-        console.log(this.users);
+        console.log("after delete user ", this.users);
       });
       // this.socket.on("connection", (ws: WebSocket, req: IncomingMessage) => {
       //   this.onConnection(ws, req);

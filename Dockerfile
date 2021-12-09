@@ -8,7 +8,6 @@ COPY . .
 
 RUN npm install --no-optional
 
-
 RUN npm run build
 
 WORKDIR /usr/src/app/ui

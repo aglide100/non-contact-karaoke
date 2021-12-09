@@ -14,26 +14,23 @@ import {
 
 type roomProps = {
   roomId: string;
-  roomTitle: string;
+  users: userProps[];
 };
+
 
 type userProps = {
   name: string;
-  userId: string;
 };
 
 const dumpUserList: userProps[] = [
   {
     name: "홍길동1",
-    userId: "1",
   },
   {
     name: "홍길동2",
-    userId: "2",
   },
   {
     name: "홍길동3",
-    userId: "3",
   },
 ];
 
@@ -46,6 +43,7 @@ const Rooms: React.FC = ({}) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const [roomListData, setRoomListData] = useState([]);
   const socketRef = useRef<SocketIOClient.Socket>();
+  // const [rooms, setRooms] = useState<roomProps[]>(null)
 
   useEffect(() => {
     if (!isLoaded) {
@@ -53,14 +51,23 @@ const Rooms: React.FC = ({}) => {
       socketRef.current.emit("get_rooms");
       socketRef.current.on(
         "all_rooms",
-        (allRooms: Array<{ roomId: string; userId: string[] }>) => {
-          allRooms.forEach(async (room) => {
-            console.log(room);
-          });
+        (data) => {
+          console.log("data:", data)
+          setRoomListData(data)
         }
       );
+
+      socketRef.current.on(
+        "in_users",
+        (data) => {
+          console.log("in users:", data)
+          
+
+          // setOnClickRoomData(data);
+        }
+      )
+      setIsLoaded(true);
     }
-    return () => setIsLoaded(true);
   }, []);
 
   if (roomListData != undefined && isLoaded) {
@@ -69,12 +76,11 @@ const Rooms: React.FC = ({}) => {
         <RoomItem
           key={index}
           roomId={room.roomId}
-          roomTitle={room.roomTitle}
           onHandleClick={(e) => {
-            onHandleClick(room.roomId, room.roomTitle);
-          }}
-          onClickDelte={(e) => {
-            onDeleteClick(room.roomId);
+            onHandleClick(room.roomId);
+            socketRef.current.emit("get_users", {
+              room: room.roomId,
+            });
           }}
         ></RoomItem>
       );
@@ -85,13 +91,10 @@ const Rooms: React.FC = ({}) => {
     alert("delete is wip");
   }
 
-  function onHandleClick(roomId, roomTitle) {
-    let data: roomProps = {
-      roomId: roomId,
-      roomTitle: roomTitle,
-    };
-
-    setOnClickRoomData(data);
+  function onHandleClick(roomId) {
+    socketRef.current.emit("get_users", {
+      room: roomId,
+    });
   }
 
   return (
@@ -105,15 +108,15 @@ const Rooms: React.FC = ({}) => {
         <>
           <div style={InnerRoomFrame}>
             <div style={CurRoomStyleFrame}>
-              <div style={CurRoomStyle}>{onClickRoomData.roomTitle}방</div>
+              <div style={CurRoomStyle}>{onClickRoomData.roomId}방</div>
               <ul>
                 {dumpUserList.map((user) => {
                   return (
                     <li
-                      key={user.userId}
+                      key={user.name}
                       onClick={(e) => {
                         e.preventDefault();
-                        alert("User Id:" + user.userId);
+                        alert("User Id:" + user.name);
                       }}
                     >
                       <div style={ParStyle}>{user.name}</div>

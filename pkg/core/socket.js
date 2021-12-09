@@ -34,15 +34,12 @@ class Server {
         this.app = (0, express_1.default)();
         this.users = new Array();
         this.socketToRoom = new Array();
+        this.rooms = new Array();
         const cors = require("cors");
         this.app.use(cors());
         console.log("user: ", this.users);
         this.server = http.createServer(this.app);
-        // this.socket = new ws.Server({
-        //   server: this.server,
-        // });
         this.io = socketio.listen(this.server);
-        // this.websocketHandler = new WebSocketHandler();
         this.handleSocketConnection();
     }
     handleSocketConnection() {
@@ -55,16 +52,40 @@ class Server {
                         return;
                     }
                     this.users[data.room].push({ id: socket.id, email: data.email });
+                    this.rooms.map((room) => {
+                        if (room !== data.room) {
+                            return room;
+                        }
+                    });
+                    this.rooms.push({ roomId: data.room });
                 }
                 else {
                     this.users[data.room] = [{ id: socket.id, email: data.email }];
+                    this.rooms = [{ roomId: data.room }];
                 }
                 this.socketToRoom[socket.id] = data.room;
                 socket.join(data.room);
                 console.log(`[${this.socketToRoom[socket.id]}]: ${socket.id} enter`);
+                console.log("users: ", this.users);
                 const usersInThisRoom = this.users[data.room].filter((user) => user.id !== socket.id);
                 console.log(usersInThisRoom);
                 this.io.sockets.to(socket.id).emit("all_users", usersInThisRoom);
+            });
+            socket.on("get_rooms", (data) => {
+                // let rooms = []
+                // rooms = Object.values(this.users)
+                // rooms = rooms.map((room) => {
+                //   return ({
+                //     id: room.id,
+                //     email: room.email,
+                //     room,
+                //   })
+                // })
+                this.io.sockets.to(socket.id).emit("all_rooms", this.rooms);
+            });
+            socket.on("get_users", (data) => {
+                const usersInThisRoom = this.users[data.room];
+                this.io.sockets.to(socket.id).emit("in_users", usersInThisRoom);
             });
             socket.on("offer", (data) => {
                 //console.log(data.sdp);
@@ -93,15 +114,17 @@ class Server {
                 const roomID = this.socketToRoom[socket.id];
                 let room = this.users[roomID];
                 if (room) {
+                    this.rooms.filter((room) => room !== roomID);
                     room = room.filter((user) => user.id !== socket.id);
                     this.users[roomID] = room;
                     if (room.length === 0) {
                         delete this.users[roomID];
+                        this.users = this.users.filter((user) => user != null);
                         return;
                     }
                 }
                 socket.to(roomID).emit("user_exit", { id: socket.id });
-                console.log(this.users);
+                console.log("after delete user ", this.users);
             });
             // this.socket.on("connection", (ws: WebSocket, req: IncomingMessage) => {
             //   this.onConnection(ws, req);

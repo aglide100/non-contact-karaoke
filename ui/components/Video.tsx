@@ -10,18 +10,6 @@ const Container = styled.div`
   margin: 5px;
 `;
 
-const VideoContainer = styled.video`
-  width: 240px;
-  height: 240px;
-  background-color: black;
-`;
-
-const UserLabel = styled.p`
-  display: inline-block;
-  position: absolute;
-  top: 230px;
-  left: 0px;
-`;
 
 interface Props {
   email: string;
@@ -40,8 +28,8 @@ const Video = ({ email, stream, muted }: Props) => {
 
   return (
     <Container>
-      <VideoContainer ref={ref} muted={isMuted} autoPlay playsinline />
-      <UserLabel>{email}</UserLabel>
+      <video ref={ref} muted={isMuted} autoPlay playsInline style={{width: "300px", height: "300px"}}  />
+      <p style={{top: "320px", left: "0px", position: "absolute"}}>{email}</p>
     </Container>
   );
 };
