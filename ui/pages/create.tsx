@@ -33,7 +33,7 @@ const CreatePage: React.FC<{}> = ({}) => {
         <div
           onClick={(e) => {
             e.preventDefault();
-            setCookie("room_id", roomTitle)
+            setCookie("room_id", roomTitle);
             router.push("/room/");
           }}
         >

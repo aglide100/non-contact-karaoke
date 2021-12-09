@@ -28,23 +28,20 @@ export class Server {
   private socketToRoom: any[];
   private io: any;
   private socket: any;
+  private rooms: any[];
 
   constructor() {
     console.log("starting create socket");
     this.app = express();
     this.users = new Array();
     this.socketToRoom = new Array();
+    this.rooms = new Array();
     const cors = require("cors");
     this.app.use(cors());
     console.log("user: ", this.users);
 
     this.server = http.createServer(this.app);
-    // this.socket = new ws.Server({
-    //   server: this.server,
-    // });
     this.io = socketio.listen(this.server);
-
-    // this.websocketHandler = new WebSocketHandler();
 
     this.handleSocketConnection();
   }
@@ -74,6 +71,10 @@ export class Server {
         console.log(usersInThisRoom);
 
         this.io.sockets.to(socket.id).emit("all_users", usersInThisRoom);
+      });
+
+      socket.on("get_rooms", (data: any) => {
+        this.io.sockets.to(socket.id).emit("all_rooms", this.socketToRoom);
       });
 
       socket.on("offer", (data: any) => {

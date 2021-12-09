@@ -10,40 +10,48 @@ import React, {
 } from "react";
 import { useRouter } from "next/router";
 import io, { SocketIOClient } from "socket.io-client";
-import Video from '../components/Video'
+import Video from "../components/Video";
 import { getCookie } from "../utils/cookie";
 
 const getWebcam = (callback) => {
   try {
     const constraints = {
-      'video': true,
-      'audio': false
-    }
-    navigator.mediaDevices.getUserMedia(constraints)
-      .then(callback);
+      video: true,
+      audio: false,
+    };
+    navigator.mediaDevices.getUserMedia(constraints).then(callback);
   } catch (err) {
     if (err.name == "NotFoundError" || err.name == "DevicesNotFoundError") {
-      //required track is missing 
+      //required track is missing
       console.log(`getUserMedia NotFoundError error: ${err}`);
-   } else if (err.name == "NotReadableError" || err.name == "TrackStartError") {
-      //webcam or mic are already in use 
+    } else if (
+      err.name == "NotReadableError" ||
+      err.name == "TrackStartError"
+    ) {
+      //webcam or mic are already in use
       console.log(`getUserMedia NotReadableError error: ${err}`);
-   } else if (err.name == "OverconstrainedError" || err.name == "ConstraintNotSatisfiedError") {
+    } else if (
+      err.name == "OverconstrainedError" ||
+      err.name == "ConstraintNotSatisfiedError"
+    ) {
       //constraints can not be satisfied by avb. devices
-      console.log(`getUserMedia OverconstrainedError error: ${err}`); 
-   } else if (err.name == "NotAllowedError" || err.name == "PermissionDeniedError") {
+      console.log(`getUserMedia OverconstrainedError error: ${err}`);
+    } else if (
+      err.name == "NotAllowedError" ||
+      err.name == "PermissionDeniedError"
+    ) {
       //permission denied in browser
-      console.log(`getUserMedia NotAllowedError error: ${err}`); 
-   } else if (err.name == "TypeError" || err.name == "TypeError") {
-      //empty constraints object 
+      console.log(`getUserMedia NotAllowedError error: ${err}`);
+    } else if (err.name == "TypeError" || err.name == "TypeError") {
+      //empty constraints object
       console.log(`getUserMedia TypeError error: ${err}`);
-   } else {
-      //other errors 
+    } else {
+      //other errors
       console.log(`getUserMedia error: ${err}`);
-   }
+    }
     return undefined;
   }
-}
+};
 
 type WebRTCUser = {
   id: string;
@@ -67,23 +75,23 @@ const pc_config = {
 const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 
 const constraints = {
-  audio: true, video: { width: 640, height: 480 } 
-}
-
+  audio: true,
+  video: { width: 640, height: 480 },
+};
 
 const Test = () => {
   const router = useRouter();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream>(null);
 
-  let roomId = getCookie("room_id")
+  let roomId = getCookie("room_id");
   let userID = getCookie("user_name");
   if (userID == undefined) {
     userID = "unamed";
   }
 
   if (roomId == undefined) {
-      roomId = 'undefined';
+    roomId = "undefined";
   }
   const socketRef = useRef<SocketIOClient.Socket>();
   const pcsRef = useRef<{ [socketId: string]: RTCPeerConnection }>({});
@@ -110,7 +118,7 @@ const Test = () => {
         };
 
         pc.ontrack = (e) => {
-          console.log("ontrack success", );
+          console.log("ontrack success");
           setUsers((oldUsers) =>
             oldUsers
               .filter((user) => user.id !== socketID)
@@ -144,131 +152,129 @@ const Test = () => {
   const [playing, setPlaying] = React.useState(undefined);
   const videoRef = React.useRef(null);
   useEffect(() => {
-      socketRef.current = io.connect(SOCKET_SERVER_URL);
-      if (navigator.mediaDevices === undefined) {
-        alert("Your browers is looks like too old!")
-      }
-      if (!socketRef.current) {
-        return
-      }
+    socketRef.current = io.connect(SOCKET_SERVER_URL);
+    if (navigator.mediaDevices === undefined) {
+      alert("Your browers is looks like too old!");
+    }
+    if (!socketRef.current) {
+      return;
+    }
 
-      getWebcam((localStream) => {
-        setPlaying(true);
-        localStreamRef.current = localStream;
-        if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
-      
-        socketRef.current.emit("join_room", {
-          room: roomId,
-          email: userID,
-        })
-      })
-      
-      
-      socketRef.current.on(
-        "all_users",
-        (allUsers: Array<{ id: string; email: string }>) => {
-          allUsers.forEach(async (user) => {
-            if (!localStreamRef.current) return;
-            const pc = createPeerConnection(user.id, user.email);
-            if (!(pc && socketRef.current)) return;
-            pcsRef.current = { ...pcsRef.current, [user.id]: pc };
-            try {
-              const localSdp = await pc.createOffer({
-                offerToReceiveAudio: true,
-                offerToReceiveVideo: true,
-              });
-              console.log("create offer success", user.email, user.id);
-              await pc.setLocalDescription(new RTCSessionDescription(localSdp));
-  
-              socketRef.current.emit("offer", {
-                sdp: localSdp,
-                offerSendID: socketRef.current.id,
-                offerSendEmail: user.email,
-                offerReceiveID: user.id,
-              });
-            } catch (e) {
-              console.error(e);
-            }
-          });
-        }
-      );
-  
-      socketRef.current.on(
-        "getOffer",
-        async (data: {
-          sdp: RTCSessionDescription;
-          offerSendID: string;
-          offerSendEmail: string;
-        }) => {
-          const { sdp, offerSendID, offerSendEmail } = data;
-          console.log("get offer");
+    getWebcam((localStream) => {
+      setPlaying(true);
+      localStreamRef.current = localStream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
+
+      socketRef.current.emit("join_room", {
+        room: roomId,
+        email: userID,
+      });
+    });
+
+    socketRef.current.on(
+      "all_users",
+      (allUsers: Array<{ id: string; email: string }>) => {
+        allUsers.forEach(async (user) => {
           if (!localStreamRef.current) return;
-          const pc = createPeerConnection(offerSendID, offerSendEmail);
+          const pc = createPeerConnection(user.id, user.email);
           if (!(pc && socketRef.current)) return;
-          pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
+          pcsRef.current = { ...pcsRef.current, [user.id]: pc };
           try {
-            await pc.setRemoteDescription(new RTCSessionDescription(sdp));
-            console.log("answer set remote description success");
-            const localSdp = await pc.createAnswer({
-              offerToReceiveVideo: true,
+            const localSdp = await pc.createOffer({
               offerToReceiveAudio: true,
+              offerToReceiveVideo: true,
             });
+            console.log("create offer success", user.email, user.id);
             await pc.setLocalDescription(new RTCSessionDescription(localSdp));
-            socketRef.current.emit("answer", {
+
+            socketRef.current.emit("offer", {
               sdp: localSdp,
-              answerSendID: socketRef.current.id,
-              answerReceiveID: offerSendID,
+              offerSendID: socketRef.current.id,
+              offerSendEmail: user.email,
+              offerReceiveID: user.id,
             });
           } catch (e) {
             console.error(e);
           }
-        }
-      );
-  
-      socketRef.current.on(
-        "getAnswer",
-        (data: { sdp: RTCSessionDescription; answerSendID: string }) => {
-          const { sdp, answerSendID } = data;
-          console.log("get answer");
-          const pc: RTCPeerConnection = pcsRef.current[answerSendID];
-          if (!pc) return;
-          pc.setRemoteDescription(new RTCSessionDescription(sdp));
-        }
-      );
-  
-      socketRef.current.on(
-        "getCandidate",
-        async (data: {
-          candidate: RTCIceCandidateInit;
-          candidateSendID: string;
-        }) => {
-          console.log("get candidate");
-          const pc: RTCPeerConnection = pcsRef.current[data.candidateSendID];
-          if (!pc) return;
-          await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
-          console.log("candidate add success");
-        }
-      );
-  
-      socketRef.current.on("user_exit", (data: { id: string }) => {
-        if (!pcsRef.current[data.id]) return;
-        pcsRef.current[data.id].close();
-        delete pcsRef.current[data.id];
-        setUsers((oldUsers) => oldUsers.filter((user) => user.id !== data.id));
-      });
-  
-      return () => {
-        if (socketRef.current) {
-          socketRef.current.disconnect();
-        }
-        users.forEach((user) => {
-          if (!pcsRef.current[user.id]) return;
-          pcsRef.current[user.id].close();
-          delete pcsRef.current[user.id];
         });
-      };
-    
-  },[createPeerConnection])
+      }
+    );
+
+    socketRef.current.on(
+      "getOffer",
+      async (data: {
+        sdp: RTCSessionDescription;
+        offerSendID: string;
+        offerSendEmail: string;
+      }) => {
+        const { sdp, offerSendID, offerSendEmail } = data;
+        console.log("get offer");
+        if (!localStreamRef.current) return;
+        const pc = createPeerConnection(offerSendID, offerSendEmail);
+        if (!(pc && socketRef.current)) return;
+        pcsRef.current = { ...pcsRef.current, [offerSendID]: pc };
+        try {
+          await pc.setRemoteDescription(new RTCSessionDescription(sdp));
+          console.log("answer set remote description success");
+          const localSdp = await pc.createAnswer({
+            offerToReceiveVideo: true,
+            offerToReceiveAudio: true,
+          });
+          await pc.setLocalDescription(new RTCSessionDescription(localSdp));
+          socketRef.current.emit("answer", {
+            sdp: localSdp,
+            answerSendID: socketRef.current.id,
+            answerReceiveID: offerSendID,
+          });
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    );
+
+    socketRef.current.on(
+      "getAnswer",
+      (data: { sdp: RTCSessionDescription; answerSendID: string }) => {
+        const { sdp, answerSendID } = data;
+        console.log("get answer");
+        const pc: RTCPeerConnection = pcsRef.current[answerSendID];
+        if (!pc) return;
+        pc.setRemoteDescription(new RTCSessionDescription(sdp));
+      }
+    );
+
+    socketRef.current.on(
+      "getCandidate",
+      async (data: {
+        candidate: RTCIceCandidateInit;
+        candidateSendID: string;
+      }) => {
+        console.log("get candidate");
+        const pc: RTCPeerConnection = pcsRef.current[data.candidateSendID];
+        if (!pc) return;
+        await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+        console.log("candidate add success");
+      }
+    );
+
+    socketRef.current.on("user_exit", (data: { id: string }) => {
+      if (!pcsRef.current[data.id]) return;
+      pcsRef.current[data.id].close();
+      delete pcsRef.current[data.id];
+      setUsers((oldUsers) => oldUsers.filter((user) => user.id !== data.id));
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      users.forEach((user) => {
+        if (!pcsRef.current[user.id]) return;
+        pcsRef.current[user.id].close();
+        delete pcsRef.current[user.id];
+      });
+    };
+  }, [createPeerConnection]);
 
   const startOrStop = () => {
     if (playing) {
@@ -277,25 +283,34 @@ const Test = () => {
         track.stop();
       });
     } else {
-      getWebcam((localStream => {
+      getWebcam((localStream) => {
         setPlaying(true);
         localStreamRef.current = localStream;
-        if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
-  
+        if (localVideoRef.current)
+          localVideoRef.current.srcObject = localStream;
+
         // videoRef.current.srcObject = stream;
-      }));
+      });
     }
     setPlaying(!playing);
-  }
+  };
 
   return (
     <div>
-       <div className="text-green-500">room id : {roomId}</div>
-      <video ref={localVideoRef} autoPlay style={{"width": "300px", "height": "300px"}} />
-      {users.map((user, index) => (
-              <Video key={index} email={user.email} stream={user.stream} />
-          ))}
-      <button color="warning" onClick={() => startOrStop()}>{playing ? 'Stop' : 'Start'} </button>
+      <div className="text-green-500">room id : {roomId}</div>
+      <div className="flex flex-row">
+        <video
+          ref={localVideoRef}
+          autoPlay
+          style={{ width: "300px", height: "300px" }}
+        />
+        {users.map((user, index) => (
+          <Video key={index} email={user.email} stream={user.stream} />
+        ))}
+      </div>
+      <button color="warning" onClick={() => startOrStop()}>
+        {playing ? "Stop" : "Start"}{" "}
+      </button>
     </div>
   );
 };

@@ -1,5 +1,6 @@
-import React, { ReactElement, useEffect, useState } from "react";
+import React, { ReactElement, useEffect, useState, useRef } from "react";
 import RoomItem, { RoomItemProps } from "../../components/RoomItem";
+import io, { SocketIOClient } from "socket.io-client";
 
 import {
   CurRoomStyle,
@@ -36,15 +37,28 @@ const dumpUserList: userProps[] = [
   },
 ];
 
+const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
+
 const Rooms: React.FC = ({}) => {
   let roomList: ReactElement[];
   const [onClickRoomData, setOnClickRoomData] = useState<roomProps>();
   const [userInRoom, setUserInRoom] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
   const [roomListData, setRoomListData] = useState([]);
+  const socketRef = useRef<SocketIOClient.Socket>();
 
   useEffect(() => {
     if (!isLoaded) {
+      socketRef.current = io.connect(SOCKET_SERVER_URL);
+      socketRef.current.emit("get_rooms");
+      socketRef.current.on(
+        "all_rooms",
+        (allRooms: Array<{ roomId: string; userId: string[] }>) => {
+          allRooms.forEach(async (room) => {
+            console.log(room);
+          });
+        }
+      );
     }
     return () => setIsLoaded(true);
   }, []);
