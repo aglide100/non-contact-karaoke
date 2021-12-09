@@ -62,3 +62,13 @@ export const ParStyle = {
   height: "55px",
   padding: "10px 10px",
 };
+
+export const LyrisFrame = {
+  border: "1px solid black",
+  background: "silver",
+  width: "680px",
+  height: "510px",
+  margin: "10px",
+  padding: "20px 20px"
+    
+};

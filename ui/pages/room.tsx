@@ -12,6 +12,9 @@ import { useRouter } from "next/router";
 import io, { SocketIOClient } from "socket.io-client";
 import Video from '../components/Video'
 import { getCookie } from "../utils/cookie";
+import { Line } from "rc-progress";
+import { LyrisFrame } from "../components/roomStyle";
+
 
 const getWebcam = (callback) => {
   try {
@@ -75,6 +78,10 @@ const Test = () => {
   const router = useRouter();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream>(null);
+
+  const [barPercent, setBarPercent] = useState<number>(0)
+  let testPercent = 0;
+  const [isPlaying, setIsPlaying] = useState<boolean>(false)
 
   let roomId = getCookie("room_id")
   let userID = getCookie("user_name");
@@ -288,15 +295,51 @@ const Test = () => {
     setPlaying(!playing);
   }
 
+  
   return (
     <div>
-       <div className="text-green-500">room id : {roomId}</div>
+       <div className="text-green-500">room id : {roomId} 확인용 </div>
       <video ref={localVideoRef} autoPlay style={{"width": "300px", "height": "300px"}} />
       {users.map((user, index) => (
               <Video key={index} email={user.email} stream={user.stream} />
           ))}
       <button color="warning" onClick={() => startOrStop()}>{playing ? 'Stop' : 'Start'} </button>
+
+
+      <div style={LyrisFrame}>
+          가사 송출화면    
+
+
+           {/* for test */}
+           <div style={{margin : "400px 10px"}}>
+           <div onClick={(e) => {
+              e.preventDefault()
+              if (!isPlaying) {
+                // call playing music func
+                setIsPlaying(true)
+                setInterval(() => {
+                  console.log(testPercent)
+                  testPercent++;
+                  setBarPercent(testPercent)
+                  if (testPercent == 100) {
+                    clearInterval()
+                    setIsPlaying(false)
+                  }
+  
+                }, 1000)
+  
+              }
+                           }
+           }>test!</div>
+            
+            
+            <Line percent={barPercent} strokeWidth={3} strokeColor={"red"} />
+            </div>
+
+     </div>
+
     </div>
+    
   );
 };
 
