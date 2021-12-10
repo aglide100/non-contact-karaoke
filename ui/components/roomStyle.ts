@@ -62,3 +62,29 @@ export const ParStyle = {
   height: "55px",
   padding: "10px 10px",
 };
+
+export const UserVideoFrame = { 
+  width: "300px", 
+  height: "226px", 
+  margin: "10px 650px", 
+  border: "2px solid #32CD32" 
+};
+
+export const StopButtonFrame = {
+  border: "1px solid black", 
+  background: "#B0E0E6", 
+  margin:"0px 500px"
+};
+
+export const LyrisFrame = {
+  border: "1px solid black",
+  width: "1000px", height: "550px", 
+  margin: "0px 500px", 
+  boxShadow: "5px 5px 5px 5px gray"
+};
+
+export const PlayOrStopFrame = {
+  border:"2px solid gray",
+  background: "#00FFFF",
+  width: "95px"
+}

@@ -12,6 +12,7 @@ import io, { SocketIOClient } from "socket.io-client";
 import Video from "../components/Video";
 import { getCookie } from "../utils/cookie";
 import dynamic from "next/dynamic";
+import { RoomFrame, StopButtonFrame, UserVideoFrame } from "../components/roomStyle";
 
 const MusicPlayer = dynamic(
   () =>
@@ -298,23 +299,26 @@ const Test = () => {
   };
 
   return (
-    <div>
+    <div style={{height:"100%"}}>
       <div className="text-green-500">room id : {roomId}</div>
-      <div className="flex flex-row">
+      <div className="flex flex-row" style={{height:"300px"}}>
         <video
           ref={localVideoRef}
           autoPlay
           playsInline
-          style={{ width: "300px", height: "300px" }}
+          style={UserVideoFrame}
         />
         {users.map((user, index) => (
           <Video key={index} email={user.email} stream={user.stream} />
         ))}
+        
       </div>
-      <button color="warning" onClick={() => startOrStop()}>
+      <button color="warning" onClick={() => startOrStop()} style={StopButtonFrame}>
         {playing ? "Stop" : "Start"}
       </button>
+      <div>
       <MusicPlayer src="" isPublic={true} lrc={"not yet"}></MusicPlayer>
+      </div>
     </div>
   );
 };
