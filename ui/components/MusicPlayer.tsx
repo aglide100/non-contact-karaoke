@@ -3,6 +3,7 @@ import ReactAudioPlayer from "react-audio-player";
 import { Lrc } from "react-lrc";
 import { SAMPLELRC } from "../public/SampleLrc";
 import { Line } from "rc-progress";
+import { LyrisFrame, PlayOrStopFrame } from "./roomStyle";
 const sampleMusic = require("../public/test.mp3");
 
 type MusicPlayerProps = {
@@ -22,24 +23,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = (props: MusicPlayerProps) => {
 
   return (
     <>
-      <div
-        onClick={(e) => {
-          e.preventDefault();
-          if (isPlaying) {
-            audioRef.audioEl.current.pause();
-            setIsPlaying(false);
-          } else {
-            audioRef.audioEl.current.play();
-            setIsPlaying(true);
-          }
-        }}
-      >
-        play or stop
-      </div>
-      <div>
-        <Line percent={percent} strokeWidth={3} strokeColor={"red"} />
-      </div>
-      <div className="flex flex-col w-60 h-80 overflow-scroll">
+      <div className="flex flex-col overflow-scroll" style={LyrisFrame}>
         <Lrc
           currentMillisecond={time}
           lrc={SAMPLELRC}
@@ -60,6 +44,23 @@ const MusicPlayer: React.FC<MusicPlayerProps> = (props: MusicPlayerProps) => {
             </div>
           )}
         />
+        <div style={PlayOrStopFrame}
+        onClick={(e) => {
+          e.preventDefault();
+          if (isPlaying) {
+            audioRef.audioEl.current.pause();
+            setIsPlaying(false);
+          } else {
+            audioRef.audioEl.current.play();
+            setIsPlaying(true);
+          }
+        }}
+      >
+        Play or Stop
+      </div>
+        <div>
+        <Line percent={percent} strokeWidth={2} strokeColor={"#32CD32"} />
+      </div>
       </div>
 
       {forTest ? (
