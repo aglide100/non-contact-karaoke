@@ -20,7 +20,7 @@
     "react-cookie": "^4.1.1",
     "react-dom": "^17.0.2",
     "react-lrc": "^2.1.4",
-    "socket.io-client": "2.3.0",
+    "socket.io-client": "4.4.0",
     "styled-components": "^5.3.3",
     "websocket": "^1.0.34",
     "ws": "^8.2.2"
