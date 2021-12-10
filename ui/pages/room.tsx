@@ -8,10 +8,18 @@ import React, {
   MutableRefObject,
   useCallback,
 } from "react";
-import { useRouter } from "next/router";
 import io, { SocketIOClient } from "socket.io-client";
 import Video from "../components/Video";
 import { getCookie } from "../utils/cookie";
+import dynamic from "next/dynamic";
+
+const MusicPlayer = dynamic(
+  () =>
+    import("../components/MusicPlayer").catch((err) => {
+      return () => <div>{err}</div>;
+    }),
+  { loading: () => <div>로딩중....</div>, ssr: false }
+);
 
 const getWebcam = (callback) => {
   try {
@@ -74,17 +82,11 @@ const pc_config = {
 
 const SOCKET_SERVER_URL = "wss://wss.non-contact-karaoke.xyz";
 
-
 const Test = () => {
-  // const router = useRouter();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const localStreamRef = useRef<MediaStream>(null);
 
   let roomId = getCookie("room_id");
-  // if (isNaN(roomId)) {
-  //   roomId = roomId.toString()
-  // }
-
   let userID = getCookie("user_name");
   if (userID == undefined) {
     userID = "unamed";
@@ -164,7 +166,7 @@ const Test = () => {
       setPlaying(true);
       localStreamRef.current = localStream;
       if (localVideoRef.current) localVideoRef.current.srcObject = localStream;
-  
+
       socketRef.current.emit("join_room", {
         room: roomId.toString(),
         email: userID,
@@ -312,6 +314,7 @@ const Test = () => {
       <button color="warning" onClick={() => startOrStop()}>
         {playing ? "Stop" : "Start"}
       </button>
+      <MusicPlayer src="" isPublic={true} lrc={"not yet"}></MusicPlayer>
     </div>
   );
 };
