@@ -15,7 +15,7 @@ services:
       - 8888:8888
       - 3500:3500
     links:
-      - wsspostgres:app_db
+      - postgresnoncontact:app_db
     environment:
       FLAVOR: deploy
       DB_USER: table_admin
@@ -23,17 +23,17 @@ services:
       DB_PASSWORD: ${USERPWD}
       DB_HOST: app_db
       DB_PORT: 5432
-  wsspostgres:
-    container_name: wsspostgres
+  postgresnoncontact:
+    container_name: postgresnoncontact
     build:
       context: ./cmd/db
     volumes:
       - <<: *services-volume
-        source: ${HOST}/wsspostgres
-        target: /var/lib/wsspostgres
+        source: ${HOST}/postgresnoncontact
+        target: /var/lib/postgres
     expose:
       - 5432
-    hostname: wsspostgres
+    hostname: postgresnoncontact
     networks:
       - docker_network
     environment:

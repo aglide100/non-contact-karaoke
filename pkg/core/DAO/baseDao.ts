@@ -1,11 +1,13 @@
-import { Client, ClientConfig, Pool } from "pg";
+import { ClientConfig, Pool } from "pg";
 import console from "console";
 
 export class BaseDao {
-  private static client: Pool;
+  public static pool: Pool;
+  public static havingErr: boolean;
   private config: ClientConfig;
 
   constructor() {
+    BaseDao.havingErr = false;
     let DBUser = process.env.DB_USER;
     let DBPassword = process.env.DB_PASSWORD;
     let DBHost = process.env.DB_HOST;
@@ -51,18 +53,23 @@ export class BaseDao {
   }
 
   private async connectDB() {
-    BaseDao.client = new Pool(this.config);
-    await BaseDao.client.connect();
+    BaseDao.pool = new Pool(this.config);
+    try {
+      await BaseDao.pool.connect();
+    } catch (e) {
+      setTimeout(() => {
+        console.log("Can't access db... retry connect...");
+        this.connectDB();
+      }, 5000);
+    }
   }
 
-  public getClient() {
-    if (!BaseDao.client) {
+  public getPool() {
+    if (!BaseDao.pool || BaseDao.havingErr) {
       console.log("Creating baseDAO...");
-      BaseDao.client = new Pool(this.config);
+      BaseDao.pool = new Pool(this.config);
     }
 
-    this.connectDB();
-
-    return BaseDao.client;
+    return BaseDao.pool;
   }
 }

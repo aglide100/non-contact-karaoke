@@ -54,10 +54,10 @@ class Server {
                     this.users[data.room].push({ id: socket.id, email: data.email });
                     this.rooms.map((room) => {
                         if (room !== data.room) {
-                            return room;
+                            return data.room;
                         }
                     });
-                    this.rooms.push({ roomId: data.room });
+                    // this.rooms.push({roomId: data.room})
                 }
                 else {
                     this.users[data.room] = [{ id: socket.id, email: data.email }];

@@ -19,94 +19,129 @@ export class MemberDao extends BaseDao {
     return MemberDao.instance;
   }
 
-  public selectAllMember(callback: Function) {
+  public async selectAllMember(callback: Function) {
     const q = `SELECT * FROM "Member"`;
-    const client = this.getClient();
+    const pool = this.getPool();
 
     let data = Array();
 
-    client.query(q, async (err, result) => {
-      if (err) {
-        console.log("Can't exec query!" + err);
-      }
-      const list = result.rows;
+    try {
+      await pool.connect((err, client, release) => {
+        if (err) {
+          return err;
+        }
 
-      client.end();
+        client.query(q, async (err, result) => {
+          if (err) {
+            console.log("Can't exec query!" + err);
+          }
+          const list = result.rows;
 
-      for (var i = 0; i < list.length; i++) {
-        let newMember: MemberProps = {
-          member_no: list[i].member_no,
-          name: list[i].name,
-          password: list[i].password,
-        };
-        data.push(newMember);
-      }
+          for (var i = 0; i < list.length; i++) {
+            let newMember: MemberProps = {
+              member_no: list[i].member_no,
+              name: list[i].name,
+              password: list[i].password,
+            };
+            data.push(newMember);
+          }
 
-      callback(data);
-    });
+          client.release();
+          callback(data);
+        });
+      });
+    } catch (e) {
+      console.log("Dao Error !", e);
+    }
   }
 
   public async selectMember(member: MemberProps, callback: Function) {
     const q = `SELECT * FROM "Member" where member_no=$1 and password=$2`;
-    const client = this.getClient();
+    const pool = this.getPool();
 
-    console.log(pgp.as.format(q, [member.member_no, member.password]));
-    client.query(q, [member.member_no, member.password], (err, result) => {
-      client.end();
-
-      if (err) {
-        console.log("Can't exec query!" + err);
-        callback(null, err);
-        // return;
-      }
-
-      if (result.rowCount != 0) {
-        callback(result.rows[0], null);
-      } else {
-        callback(null, null);
-      }
-    });
-  }
-
-  public selectMemberByNo(no: String, callback: Function) {
-    const q = `SELECT * FROM "Member" where member_no = $1`;
-    const client = this.getClient();
-
-    client.query(q, [no], (err, result) => {
-      client.end();
-
-      if (err) {
-        console.log("Can't exec query!" + err);
-        callback(null, err);
-        return;
-      }
-
-      if (result.rowCount != 0) {
-        callback(result.rows[0], null);
-      } else {
-        callback(null, null);
-      }
-    });
-  }
-
-  public insertMember(member: MemberProps, callback: Function) {
-    const q = `INSERT INTO "Member"(member_no, name, password) values ($1, $2, $3)`;
-    const client = this.getClient();
-
-    client.query(
-      q,
-      [member.member_no, member.name, member.password],
-      (err, result) => {
-        client.end();
-
+    try {
+      await pool.connect((err, client, release) => {
         if (err) {
-          console.log("Can't exec query!" + err);
-          callback(null, err);
-          return;
+          return err;
         }
 
-        this.selectMember(member, callback);
-      }
-    );
+        client.query(q, [member.member_no, member.password], (err, result) => {
+          console.log();
+
+          if (err) {
+            console.log("Can't exec query!" + err);
+            callback(null, err);
+          }
+
+          client.release();
+          if (result.rowCount != 0) {
+            callback(result.rows[0], null);
+          } else {
+            callback(null, null);
+          }
+        });
+      });
+    } catch (e) {
+      console.log("Dao Error !", e);
+    }
+  }
+
+  public async selectMemberByNo(no: String, callback: Function) {
+    const q = `SELECT * FROM "Member" where member_no = $1`;
+    const pool = this.getPool();
+
+    try {
+      await pool.connect((err, client, release) => {
+        if (err) {
+          return err;
+        }
+
+        client.query(q, [no], (err, result) => {
+          if (err) {
+            console.log("Can't exec query!" + err);
+            callback(null, err);
+            return;
+          }
+
+          client.release();
+          if (result.rowCount != 0) {
+            callback(result.rows[0], null);
+          } else {
+            callback(null, null);
+          }
+        });
+      });
+    } catch (e) {
+      console.log("Dao Error !", e);
+    }
+  }
+
+  public async insertMember(member: MemberProps, callback: Function) {
+    const q = `INSERT INTO "Member"(member_no, name, password) values ($1, $2, $3)`;
+    const pool = this.getPool();
+
+    try {
+      await pool.connect((err, client, release) => {
+        if (err) {
+          return err;
+        }
+
+        client.query(
+          q,
+          [member.member_no, member.name, member.password],
+          (err, result) => {
+            if (err) {
+              console.log("Can't exec query!" + err);
+              callback(null, err);
+              return;
+            }
+
+            this.selectMember(member, callback);
+          }
+        );
+      });
+    } catch (e) {
+      console.log("Dao Error !", e);
+    }
   }
 }
