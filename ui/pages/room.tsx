@@ -301,21 +301,22 @@ const Test = () => {
   return (
     <div style={{height:"100%"}}>
       <div className="text-green-500">room id : {roomId}</div>
-      <div className="flex flex-row" style={{height:"300px"}}>
+      <div className="flex flex-row" style={{height:"230px"}}>
         <video
           ref={localVideoRef}
           autoPlay
           playsInline
           style={UserVideoFrame}
         />
+        
         {users.map((user, index) => (
           <Video key={index} email={user.email} stream={user.stream} />
         ))}
-        
+      
       </div>
       <button color="warning" onClick={() => startOrStop()} style={StopButtonFrame}>
         {playing ? "Stop" : "Start"}
-      </button>
+      </button>  
       <div>
       <MusicPlayer src="" isPublic={true} lrc={"not yet"}></MusicPlayer>
       </div>

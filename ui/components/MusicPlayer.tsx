@@ -22,8 +22,8 @@ const MusicPlayer: React.FC<MusicPlayerProps> = (props: MusicPlayerProps) => {
   const [percent, setPercent] = useState<number>(0);
 
   return (
-    <>
-      <div className="flex flex-col overflow-scroll" style={LyrisFrame}>
+    <> 
+      <div className="flex flex-col overflow-scroll" style={LyrisFrame}>  
         <Lrc
           currentMillisecond={time}
           lrc={SAMPLELRC}
@@ -56,7 +56,7 @@ const MusicPlayer: React.FC<MusicPlayerProps> = (props: MusicPlayerProps) => {
           }
         }}
       >
-        Play or Stop
+       Play or Stop
       </div>
         <div>
         <Line percent={percent} strokeWidth={2} strokeColor={"#32CD32"} />
