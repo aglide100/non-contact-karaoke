@@ -23,13 +23,35 @@ const MusicPlayer: React.FC<MusicPlayerProps> = (props: MusicPlayerProps) => {
 
   return (
     <>
-      <div className="flex flex-col overflow-scroll" style={LyrisFrame}>
+      <div
+        className="flex flex-col w-full overflow-scroll"
+        style={{ height: "500px" }}
+      >
+        <div
+          style={PlayOrStopFrame}
+          onClick={(e) => {
+            e.preventDefault();
+            if (isPlaying) {
+              audioRef.audioEl.current.pause();
+              setIsPlaying(false);
+            } else {
+              audioRef.audioEl.current.play();
+              setIsPlaying(true);
+            }
+          }}
+        >
+          {!isPlaying ? "Play" : "Stop"}
+        </div>
+        <div>
+          <Line percent={percent} strokeWidth={1.1} strokeColor={"#32CD32"} />
+        </div>
         <Lrc
+          className="relative top-32"
           currentMillisecond={time}
           lrc={SAMPLELRC}
           autoScroll={true}
           topBlank={false}
-          bottomBlank={true}
+          bottomBlank={false}
           lineRenderer={({ index, active, line }) => (
             <div
               className="flex flex-row justify-center"
@@ -44,23 +66,6 @@ const MusicPlayer: React.FC<MusicPlayerProps> = (props: MusicPlayerProps) => {
             </div>
           )}
         />
-        <div style={PlayOrStopFrame}
-        onClick={(e) => {
-          e.preventDefault();
-          if (isPlaying) {
-            audioRef.audioEl.current.pause();
-            setIsPlaying(false);
-          } else {
-            audioRef.audioEl.current.play();
-            setIsPlaying(true);
-          }
-        }}
-      >
-        Play or Stop
-      </div>
-        <div>
-        <Line percent={percent} strokeWidth={2} strokeColor={"#32CD32"} />
-      </div>
       </div>
 
       {forTest ? (

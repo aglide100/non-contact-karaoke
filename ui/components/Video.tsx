@@ -10,7 +10,6 @@ const Container = styled.div`
   margin: 5px;
 `;
 
-
 interface Props {
   email: string;
   stream: MediaStream;
@@ -28,8 +27,14 @@ const Video = ({ email, stream, muted }: Props) => {
 
   return (
     <Container>
-      <video ref={ref} muted={isMuted} autoPlay playsInline style={{width: "300px", height: "300px"}}  />
-      <p style={{top: "320px", left: "0px", position: "absolute"}}>{email}</p>
+      <video
+        ref={ref}
+        muted={isMuted}
+        autoPlay
+        playsInline
+        style={{ width: "300px", height: "300px", border: "2px solid #32CD32" }}
+      />
+      <p style={{ top: "-25px", left: "5px", position: "absolute" }}>{email}</p>
     </Container>
   );
 };

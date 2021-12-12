@@ -12,7 +12,11 @@ import io, { SocketIOClient } from "socket.io-client";
 import Video from "../components/Video";
 import { getCookie } from "../utils/cookie";
 import dynamic from "next/dynamic";
-import { RoomFrame, StopButtonFrame, UserVideoFrame } from "../components/roomStyle";
+import {
+  RoomFrame,
+  StopButtonFrame,
+  UserVideoFrame,
+} from "../components/roomStyle";
 
 const MusicPlayer = dynamic(
   () =>
@@ -279,7 +283,8 @@ const Test = () => {
     };
   }, [createPeerConnection]);
 
-  const startOrStop = () => {
+  const startOrStop = (e) => {
+    e.preventDefault();
     if (playing) {
       const s = videoRef.current.srcObject;
       s.getTracks().forEach((track) => {
@@ -299,25 +304,29 @@ const Test = () => {
   };
 
   return (
-    <div style={{height:"100%"}}>
-      <div className="text-green-500">room id : {roomId}</div>
-      <div className="flex flex-row" style={{height:"300px"}}>
-        <video
-          ref={localVideoRef}
-          autoPlay
-          playsInline
-          style={UserVideoFrame}
-        />
+    <div className="flex flex-col">
+      <div className="w-full flex flex-row ">
+        <span className="text-green-500">room id : {roomId}</span>
+      </div>
+      <div className="flex flex-row justify-center">
+        <div onClick={startOrStop}>
+          <video
+            ref={localVideoRef}
+            autoPlay
+            playsInline
+            style={{
+              width: "240px",
+              height: "240px",
+              border: "2px solid #32CD32",
+            }}
+          />
+        </div>
         {users.map((user, index) => (
           <Video key={index} email={user.email} stream={user.stream} />
         ))}
-        
       </div>
-      <button color="warning" onClick={() => startOrStop()} style={StopButtonFrame}>
-        {playing ? "Stop" : "Start"}
-      </button>
-      <div>
-      <MusicPlayer src="" isPublic={true} lrc={"not yet"}></MusicPlayer>
+      <div className="w-full ">
+        <MusicPlayer src="" isPublic={true} lrc={"not yet"}></MusicPlayer>
       </div>
     </div>
   );
