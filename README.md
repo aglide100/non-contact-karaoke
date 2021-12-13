@@ -1,6 +1,5 @@
 # Non-contact-karaoke
 
-
 ## 1. Purpose
 
 본 프로젝트는 webrtc를 이용하여 간단히 비디오 peer간 비디오 스트림을 전송하는 것을 주요 목표로 하고 있습니다.
@@ -25,7 +24,15 @@ or
     ./ run-dev.sh
 ```
 
-## 3. Dependancy
+## 3. Demo
+
+![demo1](./demo/main.png)
+![demo2](./demo/signUp.png)
+![demo1](./demo/rooms.png)
+![demo1](./demo/inRoom.png)
+
+## 4. Dependancy
+
 본 프로젝트는 2021년 12월 기준 최신 버전의 `NodeJs`기반으로 구동되며, 구조가 크게 `apid`, `socketd`, `webd`으로 나누어집니다.
 
 - `apid`는 http 메소드를 이용하여 간단히 로그인 및 회원가입처리를 합니다. 이를 위해 DB연결을 하는 DAO와 controller를 이용하며 왠만하면 restful하게 작성하였습니다.
